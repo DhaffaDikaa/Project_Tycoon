@@ -3,12 +3,16 @@ import java.util.Map;
 public class Menu {
     private String nama;
     private int hargaJual;
-    protected Map<BahanBaku, Integer> komposisi;
+    public Map<BahanBaku, Integer> komposisi;
 
     public Menu(String nama, int harga){
         this.nama = nama;
         this.hargaJual = harga;
         komposisi = new HashMap<>();
+    }
+
+    public int getHargaJual() {
+        return hargaJual;
     }
 
     public void tambahKomposisi(BahanBaku a, Integer jumlah){
