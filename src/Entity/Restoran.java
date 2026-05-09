@@ -39,8 +39,8 @@ public class Restoran {
             } else {
                 throw new BahanBakuKosongException("Menu nya ga ada nih kak");
             }
-            uang += m.getHargaJual();
         }
+        uang += m.getHargaJual();
     }
 
     //Menu
@@ -50,19 +50,19 @@ public class Restoran {
 
     //masih salah
     public Integer hitungStokMenu(Menu e) {
-        for (Map.Entry<Menu, Integer> entry : menu.entrySet()) {
-            if (menu.containsKey(e)) {
-                for (Map.Entry<BahanBaku, Integer> cari : e.komposisi.entrySet()) {
-                    if(stok.containsKey(cari)){
-                        Integer jumlahDiButuhkan = cari.getValue();
-                        Integer jumlahSementara = stok.get(cari);
+        if (!menu.containsKey(e)) return 0;
 
-                        jumlahSementara -= jumlahDiButuhkan;
-                    }
-                }
-            }
+        int bisa = Integer.MAX_VALUE;
 
+        for (Map.Entry<BahanBaku, Integer> cari : e.komposisi.entrySet()) {
+            BahanBaku bahan = cari.getKey();
+            Integer jumlahDibutuhkan = cari.getValue();
+
+            if (!stok.containsKey(bahan)) return 0;  // bahan tidak ada = tidak bisa buat
+
+            int jumlahStok = stok.get(bahan);
+            bisa = Math.min(bisa, jumlahStok / jumlahDibutuhkan);
         }
-        return 1;
+        return bisa == Integer.MAX_VALUE ? 0 : bisa;
     }
 }
