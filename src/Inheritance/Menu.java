@@ -15,7 +15,24 @@ public class Menu {
         return hargaJual;
     }
 
+    public String getNama() {
+        return nama;
+    }
+
+    public void setNama(String nama) {
+        this.nama = nama;
+    }
+
+    public void setHargaJual(int hargaJual) {
+        this.hargaJual = hargaJual;
+    }
+
     public void tambahKomposisi(BahanBaku a, Integer jumlah){
         komposisi.put(a,jumlah);
     }
+
+    public void hapusKomposisi(BahanBaku a){
+        komposisi.remove(a);
+    }
+
 }
