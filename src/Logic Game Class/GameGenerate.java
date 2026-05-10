@@ -19,6 +19,7 @@ public class GameGenerate{
         pakTo.beliBahan(bumbu, 4);
 
         System.out.println(pakTo.hitungStokMenu(nasiGoreng));
+        System.out.println(pakTo.cekBahan());
 
         //====Jual====
         try {

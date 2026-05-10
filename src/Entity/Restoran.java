@@ -22,6 +22,26 @@ public class Restoran {
         uang -= bahan.getHarga() * jumlah;
     }
 
+    public String cekBahan(){
+        String hasil = "";
+        int i = 0;
+
+        for(Map.Entry<BahanBaku, Integer> cari : stok.entrySet()){
+            BahanBaku bahan  = cari.getKey();
+            Integer jumlah = cari.getValue();
+            String nama = bahan.getNama();
+
+            hasil += nama + " : " + jumlah;
+
+            if(i < stok.size()-1){
+                hasil += "\n";
+                i++;
+            }
+        }
+
+        return hasil;
+    }
+
     public void jual(Menu m) throws BahanBakuKosongException {
 
         for (Map.Entry<BahanBaku, Integer> entry : m.komposisi.entrySet()) {
@@ -48,7 +68,10 @@ public class Restoran {
         menu.put(e, 0);
     }
 
-    //masih salah
+    public void hapusMenu(Menu e){
+        menu.remove(e);
+    }
+
     public Integer hitungStokMenu(Menu e) {
         if (!menu.containsKey(e)) return 0;
 
