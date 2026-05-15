@@ -10,7 +10,7 @@ public class Makanan extends Menu implements Serializable{
     }
 
     public int getLevelPedas(){
-        return this.getLevelPedas();
+        return this.levelPedas;
     }
 
     public void setLevelPedas(int levelPedas){

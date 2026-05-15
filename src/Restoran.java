@@ -146,9 +146,7 @@ public class Restoran implements Serializable {
     }
 
 
-    public void transaksi(int a){
-        this.uang += a;
-    }
+    public void transaksi(int a){this.uang += a;}
 
    
 }

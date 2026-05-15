@@ -11,9 +11,23 @@ public class TikusLapar extends Bencana implements Serializable{
         Map<BahanBaku,Integer> stokRestoran = r.getStok();
         if(stokRestoran == null || stokRestoran.isEmpty()){
             System.out.println("tikus datang tapi dapur kosong, tidak ada yang dicuri");
+            return;
         }
 
+        Jimat j = r.getJimatAktif();
         Random ran = new Random();
+
+        if(j instanceof JimatCleaner){
+            JimatCleaner cleaner = (JimatCleaner) j;
+
+            double persentase = cleaner.getPresentaseEfek();
+
+            if(ran.nextDouble() * 100 < persentase ){
+                System.out.println("Tikus tidak datang karena jimat !");
+                return;
+            }
+        }
+
 
         int jumlahDiCuri = ran.nextInt(3)+1;
         int yangDiCuri = ran.nextInt(stokRestoran.size());

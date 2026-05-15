@@ -1,5 +1,3 @@
-
-
 import java.io.Serializable;
 import java.util.*;
 
@@ -72,6 +70,15 @@ public class Pelanggan implements Serializable{
             System.out.println("Pelanggan pergi karena tidak ada pesanan yang bisa dibuat");
             return;
         }
+
+        try {
+            for (Menu m : pesanan) {
+                m.jual(r);
+            }
+        }catch (Exception e){
+            e.getMessage();
+        }
+
         System.out.println("------\nTotal tagihan pelanggan ini: Rp" + totalTagihan);
 
         if(this.pelangganKabur){
