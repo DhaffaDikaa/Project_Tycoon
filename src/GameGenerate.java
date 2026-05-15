@@ -21,8 +21,7 @@ public class GameGenerate {
         System.out.println("=== WELCOME TO RESTO TYCOON DEVELOPER EDITION ===");
 
         while (isRunning) {
-            // STATUS GAME
-            System.out.println("\n[ STATUS ] Level: " + r.getLevel() + " | Kapasitas: " + r.getKapasitas() + " Orang | Kas: Rp " + r.getUang());
+            System.out.println("\n[ STATUS ] Level: " + r.getLevel() + " | Kas: Rp " + r.getUang());
             System.out.println("1. Persiapan (Belanja, Resep, Jimat)");
             System.out.println("2. Buka Restoran");
             System.out.println("3. Save & Exit");
@@ -37,6 +36,7 @@ public class GameGenerate {
                     mulaiSimulasi(r);
                     break;
                 case "3":
+                    SaveGame.simpan(r, "restoranData");
                     isRunning = false;
                     break;
             }
@@ -111,30 +111,47 @@ public class GameGenerate {
     }
 
     private static void menuPersiapan(Scanner sc, Restoran r) {
+
         boolean back = false;
+
         while (!back) {
-            System.out.println("\n--- FASE PERSIAPAN (Lv." + r.getLevel() + " | Kapasitas: " + r.getKapasitas() + " Orang) ---");
+
+            // STATUS FASE PERSIAPAN
+            System.out.println(
+                    "\n--- FASE PERSIAPAN (Lv."
+                            + r.getLevel()
+                            + " | Kapasitas: "
+                            + r.getKapasitas()
+                            + " Orang) ---"
+            );
+
             System.out.println("1. Pasar (Beli Bahan Baku)");
             System.out.println("2. Dapur (Set Menu Restoran)");
             System.out.println("3. Toko Jimat (Beli/Jual)");
             System.out.println("4. Cek Stok Gudang");
             System.out.println("5. Kembali");
             System.out.print("Pilih: ");
+
             String opt = sc.nextLine();
 
             switch (opt) {
+
                 case "1":
                     beliBahan(sc, r);
                     break;
+
                 case "2":
                     setMenuRestoran(sc, r);
                     break;
+
                 case "3":
                     manajemenJimat(sc, r);
                     break;
+
                 case "4":
                     cekGudang(r);
                     break;
+
                 case "5":
                     back = true;
                     break;
@@ -204,37 +221,66 @@ public class GameGenerate {
     }
 
     private static void manajemenJimat(Scanner sc, Restoran r) {
+
         System.out.println("\n--- MANAJEMEN JIMAT ---");
-        System.out.println("1. Beli Jimat (Charming:" + HARGA_CHARMING + ", Security:" + HARGA_SECURITY + ", Cleaner:" + HARGA_CLEANER + ")");
+
+        System.out.println(
+                "1. Beli Jimat (Charming:"
+                        + HARGA_CHARMING
+                        + ", Security:"
+                        + HARGA_SECURITY
+                        + ", Cleaner:"
+                        + HARGA_CLEANER
+                        + ")"
+        );
+
         System.out.println("2. Jual Jimat (Harga 50%)");
         System.out.println("3. Gunakan Jimat");
         System.out.print("Pilihan: ");
+
         String pil = sc.nextLine();
 
+        // BELI JIMAT
         if (pil.equals("1")) {
+
             System.out.println("1. Charming, 2. Security, 3. Cleaner");
+
             String tipe = sc.nextLine();
+
             Jimat j = null;
+
             int h = 0;
+
             if (tipe.equals("1")) {
+
                 j = new JimatCharming();
                 h = HARGA_CHARMING;
+
             } else if (tipe.equals("2")) {
+
                 j = new JimatSecurity();
                 h = HARGA_SECURITY;
+
             } else if (tipe.equals("3")) {
+
                 j = new JimatCleaner();
                 h = HARGA_CLEANER;
             }
 
             if (j != null && r.getUang() >= h) {
+
                 r.kurangiUang(h);
+
                 r.getInventarisJimat().add(j);
 
                 System.out.println(j.getNama() + " terbeli!");
             }
-        } else if (pil.equals("2")) {
-            // Logika jual (remove dari inventaris, tambah uang 50%)
+
+        }
+
+        // JUAL JIMAT
+        else if (pil.equals("2")) {
+
             if (r.getInventarisJimat().isEmpty()) {
                 return;
             }
@@ -245,25 +291,44 @@ public class GameGenerate {
             int idx = Integer.parseInt(sc.nextLine()) - 1;
             if (idx >= 0 && idx < r.getInventarisJimat().size()) {
                 Jimat dijatuhin = r.getInventarisJimat().remove(idx);
-                r.tambahUang(HARGA_SECURITY / 2); // Contoh sederhana
+                if (dijatuhin instanceof JimatSecurity) {
+                    r.tambahUang(HARGA_SECURITY / 2);
+                } else if (dijatuhin instanceof JimatCharming) {
+                    r.tambahUang(HARGA_CHARMING / 2);
+                } else if (dijatuhin instanceof JimatCleaner) {
+                    r.tambahUang(HARGA_CLEANER / 2);
+                }
+
                 if (r.getJimatAktif() == dijatuhin) {
                     r.pasangJimat(null);
                 }
-                System.out.println(" Jual berhasil!");
+
+                System.out.println("Jual berhasil!");
             }
-        } else if (pil.equals("3")) {
-            // Logika pasang jimat
+        }
+
+        // PASANG JIMAT
+        else if (pil.equals("3")) {
+
             if (r.getInventarisJimat().isEmpty()) {
                 return;
             }
+
             for (int i = 0; i < r.getInventarisJimat().size(); i++) {
+
                 System.out.println((i + 1) + ". " + r.getInventarisJimat().get(i).getNama());
             }
 
             int idx = Integer.parseInt(sc.nextLine()) - 1;
+
             if (idx >= 0 && idx < r.getInventarisJimat().size()) {
-                r.pasangJimat(r.getInventarisJimat().get(idx));
-                System.out.println(r.getJimatAktif().aktifkanEfek());
+
+                r.pasangJimat(
+                        r.getInventarisJimat().get(idx));
+
+                System.out.println(
+                        r.getJimatAktif().aktifkanEfek()
+                );
             }
         }
     }
@@ -276,48 +341,44 @@ public class GameGenerate {
     }
 
     private static void mulaiSimulasi(Restoran r) {
-
         if (r.getMenu().isEmpty()) {
+
             System.out.println("Gagal buka! Anda belum menentukan menu di Dapur.");
             return;
         }
-
-        System.out.println(
-                "\n=== RESTORAN DIBUKA (Kapasitas Maksimal: " + r.getKapasitas() + ") ===");
+        System.out.println("\n=== RESTORAN DIBUKA (Kapasitas Maksimal: " + r.getKapasitas() + ") ==="
+        );
 
         Random ran = new Random();
 
         int totalTamu = 0;
         int kursiTerisi = 0;
-
         for (int i = 0; i < 5; i++) {
-
             int jml = ran.nextInt(4) + 1;
-
-            System.out.println("\n[Rombongan " + (i + 1) + "] " + jml + " orang datang...");
+            System.out.println("\n[Rombongan " + (i + 1) + "] " + jml + " orang datang..."
+            );
 
             // CEK KAPASITAS
             if (kursiTerisi + jml <= r.getKapasitas()) {
-
                 kursiTerisi += jml;
                 System.out.println("Tamu duduk. (Kursi terpakai: " + kursiTerisi + "/" + r.getKapasitas() + ")");
 
                 totalTamu += jml;
                 Pelanggan p = new Pelanggan(jml, r);
-
                 p.pilihMenu(r);
                 p.selesaikanTransaksi(r);
-
                 kursiTerisi -= jml;
                 System.out.println("Tamu selesai dan pergi. Kursi kosong kembali.");
 
             } else {
-                System.out.println(
-                        "Restoran Penuh! " + jml + " tamu tidak jadi pesan dan langsung pergi.");
+                System.out.println("Restoran penuh! " + jml + " tamu tidak jadi pesan dan langsung pergi."
+                );
             }
         }
+
         r.tambahExp(totalTamu * 20);
         System.out.println("\n=== HARI BERAKHIR ===");
-        System.out.println("Total tamu yang dilayani: " + totalTamu);
+        System.out.println("Total tamu yang dilayani: " + totalTamu
+        );
     }
 }
