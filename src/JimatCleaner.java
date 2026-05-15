@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class JimatCleaner extends Jimat {
+public class JimatCleaner extends Jimat implements Serializable{
 
     private double reduksiPeluangTikus;
 

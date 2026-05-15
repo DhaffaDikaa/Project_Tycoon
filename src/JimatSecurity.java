@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class JimatSecurity extends Jimat {
+public class JimatSecurity extends Jimat implements Serializable {
 
     private double reduksiPeluangKabur;
 
@@ -13,7 +14,7 @@ public class JimatSecurity extends Jimat {
         return "Efek " + getNama() + " aktif! Keamanan meningkat, reduksi kabur: " + String.format("%.2f", reduksiPeluangKabur) + "%.";
     }
 
-    public double tingkatkankeamanan(double peluangAwal) {
+    public double tingkatkanKeamanan(double peluangAwal) {
         double peluangBaru = peluangAwal - (peluangAwal * (reduksiPeluangKabur / 100));
         return Math.max(0, peluangBaru);
     }

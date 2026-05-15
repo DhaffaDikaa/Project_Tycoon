@@ -1,7 +1,9 @@
+import java.io.Serializable;
 
-public class JimatCharming extends Jimat {
+public class JimatCharming extends Jimat implements Serializable{
 
     private double bonusTips;
+    private double hargaAsli;
 
     public JimatCharming() {
         super("Jimat Charming");
@@ -14,6 +16,12 @@ public class JimatCharming extends Jimat {
     }
 
     public double bonus(double hargaAsli) {
+        this.hargaAsli = hargaAsli;
         return hargaAsli + (hargaAsli * (bonusTips / 100));
+    }
+
+
+    public double  getBanyakTips(){
+        return  hargaAsli * (bonusTips/100);
     }
 }

@@ -1,7 +1,8 @@
 
+import java.io.Serializable;
 import java.util.Random;
 
-abstract class Jimat {
+abstract class Jimat implements Serializable{
 
     private String nama;
     private double presentaseEfek;
