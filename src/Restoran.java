@@ -52,8 +52,8 @@ public class Restoran implements Serializable {
         this.uang += uang;
     }
 
-    public int getKapasitas(){
-        return kapasitas;
+    public int getKapasitas() {
+        return 10 + (this.level / 10) * 5;
     }
 
     public void kurangiUang(int uang){
@@ -114,6 +114,8 @@ public class Restoran implements Serializable {
         return this.stok;
     }
     
+    
+
     public void tambahMenu(Menu e) {
         daftarMenu.put(e, true);
     }

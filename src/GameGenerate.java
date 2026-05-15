@@ -21,7 +21,8 @@ public class GameGenerate {
         System.out.println("=== WELCOME TO RESTO TYCOON DEVELOPER EDITION ===");
 
         while (isRunning) {
-            System.out.println("\n[ STATUS ] Level: " + r.getLevel() + " | Kas: Rp " + r.getUang());
+            // UPDATE: Menampilkan Kapasitas di Status
+            System.out.println("\n[ STATUS ] Level: " + r.getLevel() + " | Kapasitas: " + r.getKapasitas() + " Orang | Kas: Rp " + r.getUang());
             System.out.println("1. Persiapan (Belanja, Resep, Jimat)");
             System.out.println("2. Buka Restoran");
             System.out.println("3. Save & Exit");
@@ -112,7 +113,8 @@ public class GameGenerate {
     private static void menuPersiapan(Scanner sc, Restoran r) {
         boolean back = false;
         while (!back) {
-            System.out.println("\n--- FASE PERSIAPAN (Lv." + r.getLevel() + ") ---");
+            // UPDATE: Menampilkan Kapasitas di Fase Persiapan
+            System.out.println("\n--- FASE PERSIAPAN (Lv." + r.getLevel() + " | Kapasitas: " + r.getKapasitas() + " Orang) ---");
             System.out.println("1. Pasar (Beli Bahan Baku)");
             System.out.println("2. Dapur (Set Menu Restoran)");
             System.out.println("3. Toko Jimat (Beli/Jual)");
@@ -229,7 +231,7 @@ public class GameGenerate {
             if (j != null && r.getUang() >= h) {
                 r.kurangiUang(h);
                 r.getInventarisJimat().add(j);
-                System.out.println("✅ " + j.getNama() + " terbeli!");
+                System.out.println("" + j.getNama() + " terbeli!");
             }
         } else if (pil.equals("2")) {
             // Logika jual (remove dari inventaris, tambah uang 50%)
@@ -247,7 +249,7 @@ public class GameGenerate {
                 if (r.getJimatAktif() == dijatuhin) {
                     r.pasangJimat(null);
                 }
-                System.out.println("💰 Jual berhasil!");
+                System.out.println("Jual berhasil!");
             }
         } else if (pil.equals("3")) {
             // Logika pasang jimat
@@ -275,27 +277,39 @@ public class GameGenerate {
 
     private static void mulaiSimulasi(Restoran r) {
         if (r.getMenu().isEmpty()) {
-            System.out.println("❌ Gagal buka! Anda belum menentukan menu di Dapur.");
+            System.out.println("Gagal buka! Anda belum menentukan menu di Dapur.");
             return;
         }
 
-        System.out.println("\n=== RESTORAN DIBUKA (Kapasitas: " + r.getKapasitas() + ") ===");
+        System.out.println("\n=== RESTORAN DIBUKA (Kapasitas Maksimal: " + r.getKapasitas() + ") ===");
         Random ran = new Random();
         int totalTamu = 0;
+        int kursiTerisi = 0; // UPDATE: Melacak kursi yang sedang dipakai
 
         for (int i = 0; i < 5; i++) { // 5 rombongan
             int jml = ran.nextInt(4) + 1;
-            if (totalTamu + jml > r.getKapasitas()) {
-                break;
-            }
+            System.out.println("\n[Rombongan " + (i + 1) + "] " + jml + " orang datang...");
 
-            totalTamu += jml;
-            Pelanggan p = new Pelanggan(jml, r);
-            p.pilihMenu(r);
-            p.selesaikanTransaksi(r);
+            // UPDATE LOGIKA KAPASITAS
+            if (kursiTerisi + jml <= r.getKapasitas()) {
+                kursiTerisi += jml; // Pelanggan menempati kursi
+                System.out.println("Tamu duduk. (Kursi terpakai: " + kursiTerisi + "/" + r.getKapasitas() + ")");
+
+                totalTamu += jml;
+                Pelanggan p = new Pelanggan(jml, r);
+                p.pilihMenu(r);
+                p.selesaikanTransaksi(r);
+
+                kursiTerisi -= jml; // Setelah selesai transaksi/bayar, kursi kosong kembali
+                System.out.println("Tamu selesai dan pergi. Kursi kosong kembali.");
+            } else {
+                // Jika kapasitas saat itu tidak cukup, pelanggan langsung pergi
+                System.out.println("Restoran Penuh! " + jml + " tamu tidak jadi pesan dan langsung pergi.");
+            }
         }
 
         r.tambahExp(totalTamu * 20); // EXP dari tamu
-        System.out.println("Hari berakhir. Total tamu: " + totalTamu);
+        System.out.println("\n=== HARI BERAKHIR ===");
+        System.out.println("Total tamu yang dilayani: " + totalTamu);
     }
 }
