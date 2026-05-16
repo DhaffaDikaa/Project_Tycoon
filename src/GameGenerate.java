@@ -184,9 +184,9 @@ public class GameGenerate {
             if (r.getUang() >= total) {
                 r.kurangiUang(total);
                 r.stok.put(b, r.stok.getOrDefault(b, 0) + jml);
-                System.out.println("✅ Berhasil membeli " + jml + " " + b.getNama());
+                System.out.println("Berhasil membeli " + jml + " " + b.getNama());
             } else {
-                System.out.println("❌ Uang tidak cukup!");
+                System.out.println("Uang tidak cukup!");
             }
         }
     }
@@ -367,7 +367,7 @@ public class GameGenerate {
                 Pelanggan p = new Pelanggan(jml, r);
                 p.pilihMenu(r);
                 p.selesaikanTransaksi(r);
-                kursiTerisi -= jml;
+                //kursiTerisi -= jml;
                 System.out.println("Tamu selesai dan pergi. Kursi kosong kembali.");
 
             } else {

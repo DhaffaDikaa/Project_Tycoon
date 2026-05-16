@@ -12,6 +12,7 @@ public class Restoran implements Serializable {
     private Jimat jimatAktif;
     private  int level =1;
     private  int exp =0;
+    private int hari = 1;
     private ArrayList<Jimat> inventarisJimat = new ArrayList<>();
 
 
@@ -46,6 +47,10 @@ public class Restoran implements Serializable {
 
     public int getLevel(){
         return level;
+    }
+
+    public int getHari() {
+        return hari;
     }
 
     public void tambahUang(int uang){
