@@ -34,7 +34,11 @@ public class Restoran implements Serializable {
 
     public void pasangJimat(Jimat j){
         this.jimatAktif = j;
-        System.out.println(j.aktifkanEfek());
+        if (j != null) {
+            System.out.println(j.aktifkanEfek()); 
+        } else {
+            System.out.println("Jimat telah dilepas.");
+        }
     }
 
     public Jimat getJimatAktif(){
@@ -47,6 +51,21 @@ public class Restoran implements Serializable {
 
     public int getLevel(){
         return level;
+    }
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setUang(int uang) {
+        this.uang = uang;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
+
+    public int getExp(){
+        return exp;
     }
 
     public int getHari() {

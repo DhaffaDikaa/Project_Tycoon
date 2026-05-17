@@ -1,0 +1,11 @@
+4
+692000
+---STOK---
+Telur,0
+Beras,59
+---MENU---
+Telur Dadar
+Es Teh
+Nasi Putih
+---JIMAT---
+---END---

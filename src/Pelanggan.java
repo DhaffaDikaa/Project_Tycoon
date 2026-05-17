@@ -89,7 +89,7 @@ public class Pelanggan implements Serializable{
             if(r.getJimatAktif() instanceof JimatCharming){
                 JimatCharming jc = (JimatCharming) r.getJimatAktif();
                 totalDiterima = jc.bonus(totalTagihan);
-                System.out.println("Efek Jimat Charming aktif! Anda mendapatkan tips tambahan sebesar " + jc.getPresentaseEfek() +"% dengan total tips sebesar : " + jc.getBanyakTips());
+                System.out.println("Efek Jimat Charming aktif! Anda mendapatkan tips tambahan sebesar " + String.format("%.2f",jc.getPresentaseEfek()) +"% dengan total tips sebesar : Rp." + (int)jc.getBanyakTips());
             }
             System.out.println("Pembayaran Berhasil Sebesar Rp." + (int)totalDiterima +"\n------\n");
             r.transaksi((int)totalDiterima);
