@@ -18,7 +18,6 @@ public class GudangGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // --- 1. PANEL ATAS (Status Bar) ---
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
@@ -37,17 +36,12 @@ public class GudangGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // --- 2. PANEL TENGAH (Ilustrasi & Terminal) ---
         JPanel centerPanel = new JPanel(new BorderLayout(15, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // ==========================================================
-        // TRIK MENGGAMBAR GAMBAR AGAR RESPONSITIF (IKUT MEMBESAR)
-        // ==========================================================
         JLabel lblIlustrasi = new JLabel("", SwingConstants.CENTER) {
             private Image imgAsli;
 
-            // Blok inisialisasi: Memuat gambar aslinya sekali saja saat dibuka
             {
                 try {
                     imgAsli = new ImageIcon("image/Dapur.png").getImage();
@@ -56,7 +50,6 @@ public class GudangGUI extends JFrame {
                 }
             }
 
-            // Override paintComponent agar gambar digambar ulang setiap kali ukuran window berubah
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -67,16 +60,14 @@ public class GudangGUI extends JFrame {
                     int imgH = imgAsli.getHeight(this);
 
                     if (imgW > 0 && imgH > 0) {
-                        // Menghitung rasio agar gambar membesar proporsional (tidak gepeng)
+                       
                         double ratio = Math.min((double) panelW / imgW, (double) panelH / imgH);
                         int newW = (int) (imgW * ratio);
                         int newH = (int) (imgH * ratio);
 
-                        // Menghitung kordinat X dan Y agar gambar tetap di tengah (Center)
                         int x = (panelW - newW) / 2;
                         int y = (panelH - newH) / 2;
 
-                        // Menggambar gambarnya secara langsung (Graphics)
                         g.drawImage(imgAsli, x, y, newW, newH, this);
                     }
                 } else {
@@ -86,7 +77,6 @@ public class GudangGUI extends JFrame {
         };
         lblIlustrasi.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
 
-        // --- Bagian Terminal Kanan ---
         terminalArea = new JTextArea();
         terminalArea.setEditable(false);
         terminalArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
@@ -95,16 +85,13 @@ public class GudangGUI extends JFrame {
         JScrollPane scrollTerminal = new JScrollPane(terminalArea);
         scrollTerminal.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
 
-        // Kunci lebar terminal menjadi 350px (dilebarkan sedikit agar teks lebih leluasa)
         scrollTerminal.setPreferredSize(new Dimension(350, 0));
 
-        // Masukkan komponen dengan menentukan lokasinya (CENTER & EAST)
         centerPanel.add(lblIlustrasi, BorderLayout.CENTER);
         centerPanel.add(scrollTerminal, BorderLayout.EAST);
 
         add(centerPanel, BorderLayout.CENTER);
 
-        // --- 3. PANEL BAWAH (Tombol Kembali) ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         bottomPanel.setPreferredSize(new Dimension(0, 70));
 
@@ -122,7 +109,6 @@ public class GudangGUI extends JFrame {
         bottomPanel.add(btnKembali);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- 4. TAMPILKAN DATA ASLI ---
         updateStatusBar();
         tampilkanStok();
     }

@@ -4,7 +4,6 @@ import java.util.*;
 
 public class GameGenerate {
 
-    // Database Master (Ditentukan oleh Developer)
     private static List<BahanBaku> MASTER_BAHAN = new ArrayList<>();
     private static List<Menu> MASTER_MENU = new ArrayList<>();
 
@@ -13,11 +12,10 @@ public class GameGenerate {
     private static final int HARGA_CLEANER = 75000;
 
     public static void main(String[] args) {
-        initDatabase(); // WAJIB dipanggil pertama kali agar database terisi
+        initDatabase(); 
 
         Scanner scanner = new Scanner(System.in);
 
-        // Memuat data dari file savegame.txt
         Restoran r = muatGame();
 
         boolean isRunning = true;
@@ -47,30 +45,24 @@ public class GameGenerate {
         }
     }
 
-    // ==========================================
-    // FITUR SAVE & LOAD FULL DATA (.TXT)
-    // ==========================================
     private static void simpanGame(Restoran r) {
         try {
             FileWriter writer = new FileWriter("savegame.txt");
 
-            // 1. Simpan Data Dasar
+          
             writer.write(r.getLevel() + "\n");
             writer.write(r.getUang() + "\n");
 
-            // 2. Simpan Data Stok Bahan Baku (Format: NamaBahan,Jumlah)
             writer.write("---STOK---\n");
             for (Map.Entry<BahanBaku, Integer> entry : r.stok.entrySet()) {
                 writer.write(entry.getKey().getNama() + "," + entry.getValue() + "\n");
             }
 
-            // 3. Simpan Daftar Menu yang Aktif (Format: NamaMenu)
             writer.write("---MENU---\n");
             for (Menu m : r.getMenu().keySet()) {
                 writer.write(m.getNama() + "\n");
             }
 
-            // 4. Simpan Inventaris Jimat (Format: NamaJimat)
             writer.write("---JIMAT---\n");
             for (Jimat j : r.getInventarisJimat()) {
                 writer.write(j.getNama() + "\n");
@@ -92,7 +84,6 @@ public class GameGenerate {
             try {
                 Scanner fileReader = new Scanner(file);
 
-                // Membaca Data Dasar
                 if (fileReader.hasNextLine()) {
                     r.setLevel(Integer.parseInt(fileReader.nextLine()));
                 }
@@ -100,7 +91,6 @@ public class GameGenerate {
                     r.setUang(Integer.parseInt(fileReader.nextLine()));
                 }
 
-                // Membaca Data Kompleks (Stok, Menu, Jimat)
                 String kategoriPembacaan = "";
 
                 while (fileReader.hasNextLine()) {
@@ -109,7 +99,6 @@ public class GameGenerate {
                         continue;
                     }
 
-                    // Deteksi pergantian kategori
                     if (baris.equals("---STOK---")) {
                         kategoriPembacaan = "STOK";
                         continue;
@@ -126,9 +115,8 @@ public class GameGenerate {
                         break;
                     }
 
-                    // Memasukkan data ke dalam Restoran sesuai kategorinya
                     if (kategoriPembacaan.equals("STOK")) {
-                        String[] data = baris.split(","); // Memisahkan nama dan jumlah
+                        String[] data = baris.split(","); 
                         if (data.length == 2) {
                             BahanBaku bahanDitemukan = cariBahan(data[0]);
                             if (bahanDitemukan != null) {
@@ -164,7 +152,6 @@ public class GameGenerate {
         return r;
     }
 
-    // Method bantuan untuk mencocokkan Nama Teks dengan Objek aslinya
     private static BahanBaku cariBahan(String nama) {
         for (BahanBaku b : MASTER_BAHAN) {
             if (b.getNama().equalsIgnoreCase(nama)) {
@@ -182,9 +169,6 @@ public class GameGenerate {
         }
         return null;
     }
-    // ==========================================
-
-    // --- DATABASE DEVELOPER ---
     private static void initDatabase() {
         BahanBaku beras = new BahanBaku("Beras", 5000, 1);
         BahanBaku telur = new BahanBaku("Telur", 3000, 1);

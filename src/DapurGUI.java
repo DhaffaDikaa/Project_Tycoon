@@ -9,7 +9,7 @@ public class DapurGUI extends JFrame {
     private Restoran restoran;
     private JLabel lblLevel, lblUang, lblKapasitas;
     private JTextArea terminalArea;
-    private List<Menu> menuTersediaSaatIni; // Menyimpan daftar resep yang sudah terbuka
+    private List<Menu> menuTersediaSaatIni; 
 
     public DapurGUI(Restoran restoran) {
         this.restoran = restoran;
@@ -21,7 +21,6 @@ public class DapurGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // --- 1. PANEL ATAS (Status Bar) ---
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
@@ -40,7 +39,6 @@ public class DapurGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // --- 2. PANEL TENGAH (Ilustrasi & Terminal) ---
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -56,7 +54,6 @@ public class DapurGUI extends JFrame {
         centerPanel.add(scrollTerminal);
         add(centerPanel, BorderLayout.CENTER);
 
-        // --- 3. PANEL BAWAH (Input Box & Tombol) ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
         bottomPanel.setPreferredSize(new Dimension(0, 80));
 
@@ -68,9 +65,6 @@ public class DapurGUI extends JFrame {
         btnPilihMenu.setPreferredSize(new Dimension(150, 40));
         btnKembali.setPreferredSize(new Dimension(150, 40));
 
-        // ========================================================
-        // LOGIKA ASLI setMenuRestoran() PINDAH KE SINI
-        // ========================================================
         btnPilihMenu.addActionListener(e -> {
             try {
                 int inputNomor = Integer.parseInt(txtFieldBox.getText());
@@ -79,13 +73,13 @@ public class DapurGUI extends JFrame {
                     Menu m = menuTersediaSaatIni.get(inputNomor - 1);
 
                     if (restoran.getMenu().containsKey(m)) {
-                        restoran.getMenu().remove(m); // Non-aktifkan
+                        restoran.getMenu().remove(m); 
                         JOptionPane.showMessageDialog(this, "➖ " + m.getNama() + " dihapus dari daftar menu hari ini.");
                     } else {
                         restoran.getMenu().put(m, true); // Aktifkan
                         JOptionPane.showMessageDialog(this, "➕ " + m.getNama() + " sekarang tersedia untuk pelanggan.");
                     }
-                    tampilkanDaftarMenu(); // Refresh daftar setelah status berubah
+                    tampilkanDaftarMenu(); 
                 } else {
                     JOptionPane.showMessageDialog(this, "❌ Nomor menu tidak tersedia di daftar!");
                 }
@@ -103,7 +97,6 @@ public class DapurGUI extends JFrame {
         bottomPanel.add(btnKembali);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- 4. TAMPILKAN DATA AWAL ---
         updateStatusBar();
         tampilkanDaftarMenu();
     }

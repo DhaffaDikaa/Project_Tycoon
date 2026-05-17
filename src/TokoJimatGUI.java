@@ -15,12 +15,11 @@ public class TokoJimatGUI extends JFrame {
         this.restoran = restoran;
 
         setTitle("Resto Tycoon - Toko Jimat");
-        setSize(950, 650); // Dilebarkan sedikit agar tombol muat
+        setSize(950, 650);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // --- 1. PANEL ATAS (Status Bar) ---
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
@@ -39,17 +38,15 @@ public class TokoJimatGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // --- 2. PANEL TENGAH (Ilustrasi Responsif & Terminal) ---
         JPanel centerPanel = new JPanel(new BorderLayout(15, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Custom JLabel untuk Gambar agar responsif (ikut membesar)
         JLabel lblIlustrasi = new JLabel("", SwingConstants.CENTER) {
             private Image imgAsli;
 
             {
                 try {
-                    // Sesuaikan nama gambar untuk toko jimat Anda
+                
                     imgAsli = new ImageIcon("image/TokoJimat.png").getImage();
                 } catch (Exception e) {
                     System.out.println("Gambar jimat tidak ditemukan.");
@@ -80,7 +77,6 @@ public class TokoJimatGUI extends JFrame {
         };
         lblIlustrasi.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
 
-        // Terminal JTextArea
         terminalArea = new JTextArea();
         terminalArea.setEditable(false);
         terminalArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
@@ -89,38 +85,34 @@ public class TokoJimatGUI extends JFrame {
         JScrollPane scrollTerminal = new JScrollPane(terminalArea);
         scrollTerminal.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
 
-        // Kunci lebar terminal ke 350px
         scrollTerminal.setPreferredSize(new Dimension(380, 0));
 
         centerPanel.add(lblIlustrasi, BorderLayout.CENTER);
         centerPanel.add(scrollTerminal, BorderLayout.EAST);
         add(centerPanel, BorderLayout.CENTER);
 
-        // --- 3. PANEL BAWAH (Navigasi CardLayout) ---
         cardLayout = new CardLayout();
         bottomCardPanel = new JPanel(cardLayout);
         bottomCardPanel.setPreferredSize(new Dimension(0, 80));
 
-        // -> Card 1: Main Menu (Ditambah Tombol Jual)
         JPanel mainTokoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
         JButton btnBeliJimat = new JButton("1. BELI JIMAT");
-        JButton btnJualJimat = new JButton("2. JUAL JIMAT (50%)"); // TOMBOL JUAL KEMBALI
+        JButton btnJualJimat = new JButton("2. JUAL JIMAT (50%)");
         JButton btnGunakanJimat = new JButton("3. GUNAKAN JIMAT");
         JButton btnKeluar = new JButton("4. KEMBALI KE MENU");
 
-        Dimension btnSize = new Dimension(180, 45); // Dikecilkan sedikit agar muat 4 tombol
+        Dimension btnSize = new Dimension(180, 45);
         Font btnFont = new Font("Segoe UI", Font.BOLD, 13);
-        setupButton(btnBeliJimat, btnSize, btnFont, new Color(52, 152, 219));    // Biru
-        setupButton(btnJualJimat, btnSize, btnFont, new Color(243, 156, 18));    // Orange
-        setupButton(btnGunakanJimat, btnSize, btnFont, new Color(46, 204, 113)); // Hijau
-        setupButton(btnKeluar, btnSize, btnFont, new Color(231, 76, 60));        // Merah
+        setupButton(btnBeliJimat, btnSize, btnFont, new Color(52, 152, 219));   
+        setupButton(btnJualJimat, btnSize, btnFont, new Color(243, 156, 18));   
+        setupButton(btnGunakanJimat, btnSize, btnFont, new Color(46, 204, 113)); 
+        setupButton(btnKeluar, btnSize, btnFont, new Color(231, 76, 60));       
 
         mainTokoPanel.add(btnBeliJimat);
         mainTokoPanel.add(btnJualJimat);
         mainTokoPanel.add(btnGunakanJimat);
         mainTokoPanel.add(btnKeluar);
 
-        // -> Card 2: Form Menu Beli
         JPanel beliPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
         JLabel lblBeli = new JLabel("MASUKKAN NOMOR JIMAT UNTUK DIBELI:");
         JTextField txtBeliBox = new JTextField(5);
@@ -135,7 +127,6 @@ public class TokoJimatGUI extends JFrame {
         beliPanel.add(btnProsesBeli);
         beliPanel.add(btnBackBeli);
 
-        // -> Card 3: Form Menu Jual (BARU DIKEMBALIKAN)
         JPanel jualPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
         JLabel lblJual = new JLabel("MASUKKAN NOMOR JIMAT UNTUK DIJUAL (50%):");
         JTextField txtJualBox = new JTextField(5);
@@ -150,7 +141,6 @@ public class TokoJimatGUI extends JFrame {
         jualPanel.add(btnProsesJual);
         jualPanel.add(btnBackJual);
 
-        // -> Card 4: Form Menu Gunakan
         JPanel gunakanPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
         JLabel lblGunakan = new JLabel("MASUKKAN NOMOR JIMAT UNTUK DIPAKAI:");
         JTextField txtGunakanBox = new JTextField(5);
@@ -165,14 +155,12 @@ public class TokoJimatGUI extends JFrame {
         gunakanPanel.add(btnProsesGunakan);
         gunakanPanel.add(btnBackGunakan);
 
-        // Masukkan semua card ke panel pembungkus bawah
         bottomCardPanel.add(mainTokoPanel, "MAIN_MENU");
         bottomCardPanel.add(beliPanel, "MENU_BELI");
         bottomCardPanel.add(jualPanel, "MENU_JUAL");
         bottomCardPanel.add(gunakanPanel, "MENU_GUNAKAN");
         add(bottomCardPanel, BorderLayout.SOUTH);
 
-        // --- ACTION LISTENERS NAVIGASI ---
         btnKeluar.addActionListener(e -> this.dispose());
 
         btnBeliJimat.addActionListener(e -> {
@@ -205,9 +193,6 @@ public class TokoJimatGUI extends JFrame {
             tampilkanDaftarShop();
         });
 
-        // ========================================================
-        // LOGIKA TRANSAKSI BELI JIMAT
-        // ========================================================
         btnProsesBeli.addActionListener(e -> {
             try {
                 int nomor = Integer.parseInt(txtBeliBox.getText());
@@ -245,20 +230,16 @@ public class TokoJimatGUI extends JFrame {
             }
         });
 
-        // ========================================================
-        // LOGIKA TRANSAKSI JUAL JIMAT (DIKEMBALIKAN DENGAN HARGA 50%)
-        // ========================================================
         btnProsesJual.addActionListener(e -> {
             try {
                 int idx = Integer.parseInt(txtJualBox.getText()) - 1;
                 List<Jimat> inventaris = restoran.getInventarisJimat();
 
                 if (idx >= 0 && idx < inventaris.size()) {
-                    // Ambil jimat yang akan dijual dari inventaris
+             
                     Jimat dijatuhin = inventaris.remove(idx);
                     int refund = 0;
 
-                    // Tentukan harga jual (50% dari harga beli)
                     if (dijatuhin.getNama().toLowerCase().contains("charming")) {
                         refund = 150000 / 2;
                     } else if (dijatuhin.getNama().toLowerCase().contains("security")) {
@@ -269,7 +250,6 @@ public class TokoJimatGUI extends JFrame {
 
                     restoran.tambahUang(refund);
 
-                    // Jika jimat yang dijual kebetulan sedang dipakai, copot!
                     if (restoran.getJimatAktif() != null && restoran.getJimatAktif().equals(dijatuhin)) {
                         restoran.pasangJimat(null);
                         terminalArea.append("⚠️ Jimat yang Anda jual sedang aktif. Jimat telah dicopot otomatis.\n");
@@ -288,9 +268,6 @@ public class TokoJimatGUI extends JFrame {
             }
         });
 
-        // ========================================================
-        // LOGIKA MENGGUNAKAN JIMAT
-        // ========================================================
         btnProsesGunakan.addActionListener(e -> {
             try {
                 int idx = Integer.parseInt(txtGunakanBox.getText()) - 1;
@@ -311,7 +288,6 @@ public class TokoJimatGUI extends JFrame {
             }
         });
 
-        // Initialize display
         updateStatusBar();
         tampilkanDaftarShop();
     }
@@ -349,7 +325,6 @@ public class TokoJimatGUI extends JFrame {
         } else {
             int no = 1;
             for (Jimat j : inventaris) {
-                // Beri tanda khusus jika jimat di inventaris adalah jimat yang sedang aktif dipakai
                 String status = (restoran.getJimatAktif() != null && restoran.getJimatAktif().equals(j)) ? " [SEDANG DIPAKAI]" : "";
                 terminalArea.append(no + ". " + j.getNama() + status + "\n");
                 no++;

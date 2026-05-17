@@ -5,33 +5,22 @@ import javax.swing.SwingUtilities;
 
 public class GameGenerateGUI {
 
-    // Database Master (Ditukar ke public agar boleh dibaca oleh file GUI yang lain)
     public static List<BahanBaku> MASTER_BAHAN = new ArrayList<>();
     public static List<Menu> MASTER_MENU = new ArrayList<>();
 
-    // Pemalar Harga Jimat
     public static final int HARGA_CHARMING = 150000;
     public static final int HARGA_SECURITY = 100000;
     public static final int HARGA_CLEANER = 75000;
 
     public static void main(String[] args) {
-        // 1. Wajib panggil ini dahulu untuk mengisi pangkalan data permainan
         initDatabase();
-
-        // 2. Muatkan data restoran dari savegame.txt (Sama seperti versi terminal)
         Restoran r = muatGame();
-
-        // 3. Lancarkan GUI Menu Utama dan hantar objek Restoran ke dalamnya
         SwingUtilities.invokeLater(() -> {
-            System.out.println("Memulakan Mod GUI...");
+            System.out.println("Memulakan Game...");
             new MainMenuGUI(r).setVisible(true);
         });
     }
 
-    // ==========================================
-    // FITUR SAVE & LOAD KEKAL SAMA (Supaya serasi dengan Mod Terminal)
-    // ==========================================
-    // Ditukar ke public static supaya butang "SAVE & EXIT" di MainMenuGUI boleh memanggilnya
     public static void simpanGame(Restoran r) {
         try {
             FileWriter writer = new FileWriter("savegame.txt");
@@ -56,9 +45,9 @@ public class GameGenerateGUI {
 
             writer.write("---END---\n");
             writer.close();
-            System.out.println("✅ Seluruh progress berjaya disimpan ke savegame.txt!");
+            System.out.println("Seluruh progress berjaya disimpan ke savegame.txt!");
         } catch (IOException e) {
-            System.out.println("❌ Gagal menyimpan game: " + e.getMessage());
+            System.out.println("Gagal menyimpan game: " + e.getMessage());
         }
     }
 
@@ -126,14 +115,14 @@ public class GameGenerateGUI {
                 }
 
                 fileReader.close();
-                System.out.println("📂 Data save game berjaya dimuatkan untuk Mod GUI!");
+                System.out.println("Data save game berjaya dimuatkan!");
 
             } catch (FileNotFoundException | NumberFormatException e) {
-                System.out.println("⚠️ Gagal memuat file, memulakan game baru...");
+                System.out.println("Gagal memuat file, memulakan game baru...");
                 r = new Restoran();
             }
         } else {
-            System.out.println("📄 Tiada file savegame.txt. Memulakan permainan baru...");
+            System.out.println("Tiada file savegame.txt. Memulakan permainan baru...");
         }
         return r;
     }
@@ -156,7 +145,6 @@ public class GameGenerateGUI {
         return null;
     }
 
-    // --- DATABASE DEVELOPER ---
     private static void initDatabase() {
         BahanBaku beras = new BahanBaku("Beras", 5000, 1);
         BahanBaku telur = new BahanBaku("Telur", 3000, 1);

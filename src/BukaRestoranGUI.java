@@ -18,7 +18,6 @@ public class BukaRestoranGUI extends JFrame {
     private JTextPane terminalPane;
     private PrintStream originalSystemOut;
 
-    // --- Definisi Warna Kustom ---
     private Color currentColor = Color.BLACK;
     private final Color COLOR_BLUE = new Color(0, 102, 204);
     private final Color COLOR_RED = new Color(204, 0, 0);
@@ -35,7 +34,6 @@ public class BukaRestoranGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // --- 1. PANEL ATAS (Status Bar) ---
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
@@ -54,7 +52,6 @@ public class BukaRestoranGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // --- 2. PANEL TENGAH (Ilustrasi & Terminal) ---
         JPanel centerPanel = new JPanel(new BorderLayout(15, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
@@ -105,7 +102,6 @@ public class BukaRestoranGUI extends JFrame {
         centerPanel.add(scrollTerminal, BorderLayout.EAST);
         add(centerPanel, BorderLayout.CENTER);
 
-        // --- 3. PANEL BAWAH (Tombol Kembali) ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         bottomPanel.setPreferredSize(new Dimension(0, 70));
 
@@ -134,7 +130,6 @@ public class BukaRestoranGUI extends JFrame {
             }
         });
 
-        // --- Alirkan Console System.out ke JTextPane dengan Format & Deteksi Warna ---
         originalSystemOut = System.out;
         OutputStream out = new OutputStream() {
             private StringBuilder buffer = new StringBuilder();
@@ -157,7 +152,6 @@ public class BukaRestoranGUI extends JFrame {
 
                     String teksKecil = text.toLowerCase();
 
-                    // --- AUTO-DETECT KATA KUNCI DARI CLASS PELANGGAN ---
                     if (teksKecil.contains("alarm") || teksKecil.contains("kabur")
                             || teksKecil.contains("rugi") || teksKecil.contains("kecewa")
                             || teksKecil.contains("penuh") || teksKecil.contains("nasib buruk") || teksKecil.contains("gawat")) {
@@ -210,9 +204,6 @@ public class BukaRestoranGUI extends JFrame {
         lblKapasitas.setText("KAPASITAS : " + restoran.getKapasitas());
     }
 
-    // ========================================================
-    // LOGIKA SIMULASI (BERSIH DARI OVERLAP!)
-    // ========================================================
     private void jalankanSimulasiRestoran(JButton btnKembali) {
         new Thread(() -> {
 
@@ -241,7 +232,6 @@ public class BukaRestoranGUI extends JFrame {
                 } catch (InterruptedException e) {
                 }
 
-                // 1. EVENT TIKUS (Dipertahankan di sini karena ini ranah Gudang, bukan Pelanggan)
                 if (ran.nextInt(100) < 20) {
                     if (hasCleaner) {
                         changeColor(COLOR_GREEN);
@@ -265,7 +255,6 @@ public class BukaRestoranGUI extends JFrame {
                     System.out.println("");
                 }
 
-                // 2. PELANGGAN DATANG 
                 int maxRandom = Math.max(1, restoran.getKapasitas() - 3);
                 int jml = ran.nextInt(maxRandom) + 1;
 
@@ -281,11 +270,10 @@ public class BukaRestoranGUI extends JFrame {
                     changeColor(COLOR_BLACK);
                     totalTamu += jml;
 
-                    // --- MEMANGGIL CLASS PELANGGAN (OOP MURNI Tanpa Overlap) ---
                     Pelanggan p = new Pelanggan(jml, restoran);
                     p.pilihMenu(restoran);
                     p.selesaikanTransaksi(restoran);
-                    // -----------------------------------------------------------
+                   
 
                     changeColor(COLOR_BLUE);
                     kursiTerisi -= jml;
@@ -301,7 +289,6 @@ public class BukaRestoranGUI extends JFrame {
                 }
             }
 
-            // 3. PENUTUPAN HARI
             changeColor(COLOR_ORANGE);
             restoran.tambahExp(totalTamu * 20);
             System.out.println("=== HARI BERAKHIR ===");

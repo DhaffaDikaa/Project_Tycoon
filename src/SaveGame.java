@@ -8,11 +8,10 @@ public class SaveGame {
             oos.writeObject(restoran);
             System.out.println("Game berhasil disimpan ke file: " + namaFile);
         } catch (IOException e) {
-            System.out.println(" Gagal menyimpan game: " + e.getMessage());
+            System.out.println("Gagal menyimpan game: " + e.getMessage());
         }
     }
 
-    // Method untuk memuat game
     public static Restoran muat(String namaFile) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(namaFile))) {
             Restoran restoran = (Restoran) ois.readObject();

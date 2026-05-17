@@ -12,16 +12,14 @@ public class TutorialGUI extends JFrame {
     private JTextArea txtDesc;
     private JButton btnPrev, btnNext;
 
-    // Data Tutorial Berbasis Langkah
     private List<TutorialStep> tutorialSteps;
     private int currentStepIndex = 0;
 
-    // Inner class untuk menampung data satu langkah
     private class TutorialStep {
 
         String title;
         String description;
-        String imagePlaceholderText; // Placeholder untuk gambar (sementara)
+        String imagePlaceholderText; 
 
         TutorialStep(String title, String description, String imagePlaceholderText) {
             this.title = title;
@@ -33,20 +31,17 @@ public class TutorialGUI extends JFrame {
     public TutorialGUI(Restoran restoran) {
         this.restoran = restoran;
         this.tutorialSteps = new ArrayList<>();
-        initTutorialData(); // Isi data tutorial lengkap
+        initTutorialData(); 
 
-        // Pengaturan dasar Frame Tutorial
         setTitle("Resto Tycoon - Panduan Tutorial Bermain");
-        setSize(950, 650); // Ukuran sedikit lebih besar agar muat layout baru
+        setSize(950, 650); 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // --- 1. PANEL ATAS (Status Bar) ---
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
-        // Membuat slot pertama menjadi teks kustom "TUTORIAL"
         JLabel lblTuto = new JLabel("TUTORIAL", SwingConstants.CENTER);
         lblTuto.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
@@ -59,24 +54,17 @@ public class TutorialGUI extends JFrame {
         lblKapasitas = new JLabel("", SwingConstants.CENTER);
         lblKapasitas.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
-        topPanel.add(lblTuto); // Slot 1 diganti
+        topPanel.add(lblTuto); 
         topPanel.add(lblLevel);
         topPanel.add(lblUang);
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // --- 2. PANEL TENGAH (Dua Panel Kustom sesuai Desain) ---
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // Kiri: Gambar Ilustrasi
         lblIlustrasi = new JLabel("GAMBAR ILUSTRASI", SwingConstants.CENTER);
         lblIlustrasi.setFont(new Font("Arial", Font.ITALIC, 16));
         lblIlustrasi.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        // Opsional: Untuk menghias, muat gambar default
-        // lblIlustrasi.setIcon(new ImageIcon("path/to/default/image.png"));
-
-        // Kanan: Deskripsi Tutorial
         txtDesc = new JTextArea();
         txtDesc.setEditable(false);
         txtDesc.setFont(new Font("Monospaced", Font.PLAIN, 14));
@@ -89,22 +77,18 @@ public class TutorialGUI extends JFrame {
         centerPanel.add(scrollDesc);
         add(centerPanel, BorderLayout.CENTER);
 
-        // --- 3. PANEL BAWAH (Navigasi Berbasis Desain Ralat) ---
         JPanel bottomPanel = new JPanel(new BorderLayout(0, 10));
         bottomPanel.setPreferredSize(new Dimension(0, 100));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 
-        // Kiri Bawah: Tombol Kembali
         JButton btnKembali = new JButton("KEMBALI");
         btnKembali.setPreferredSize(new Dimension(150, 40));
         JPanel panelKembali = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelKembali.add(btnKembali);
         bottomPanel.add(panelKembali, BorderLayout.WEST);
 
-        // Tengah Bawah: Navigasi (Panah - Teks - Panah)
         JPanel navWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
-        // Membuat tombol panah menggunakan simbol teks besar
         btnPrev = new JButton("←");
         btnPrev.setFont(new Font("Arial", Font.BOLD, 24));
         btnPrev.setPreferredSize(new Dimension(80, 50));
@@ -113,12 +97,10 @@ public class TutorialGUI extends JFrame {
         btnNext.setFont(new Font("Arial", Font.BOLD, 24));
         btnNext.setPreferredSize(new Dimension(80, 50));
 
-        // Label untuk Judul Step
         lblStepTitle = new JLabel("NAMA STEP TUTORIAL", SwingConstants.CENTER);
         lblStepTitle.setFont(new Font("Arial", Font.BOLD, 18));
         lblStepTitle.setPreferredSize(new Dimension(450, 30));
 
-        // Menambah ke panel nav (Kiri ke Kanan)
         navWrapper.add(btnPrev);
         navWrapper.add(lblStepTitle);
         navWrapper.add(btnNext);
@@ -126,14 +108,12 @@ public class TutorialGUI extends JFrame {
 
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- 4. ACTION LISTENERS ---
         btnPrev.addActionListener(e -> navigateTutorial(-1));
         btnNext.addActionListener(e -> navigateTutorial(1));
-        btnKembali.addActionListener(e -> this.dispose()); // Tutup tutorial
+        btnKembali.addActionListener(e -> this.dispose()); 
 
-        // --- 5. INITIALIZE DISPLAY ---
         updateStatusBar();
-        displayCurrentStep(); // Tampilkan langkah pertama
+        displayCurrentStep(); 
     }
 
     private void updateStatusBar() {
@@ -142,11 +122,9 @@ public class TutorialGUI extends JFrame {
         lblKapasitas.setText("KAPASITAS : " + restoran.getKapasitas());
     }
 
-    // Method untuk menangani navigasi (panah kiri/kanan)
     private void navigateTutorial(int direction) {
         currentStepIndex += direction;
 
-        // Loop kembali jika di luar batas
         if (currentStepIndex < 0) {
             currentStepIndex = tutorialSteps.size() - 1;
         } else if (currentStepIndex >= tutorialSteps.size()) {
@@ -156,7 +134,6 @@ public class TutorialGUI extends JFrame {
         displayCurrentStep();
     }
 
-    // Method untuk menampilkan langkah tutorial saat ini (Judul, Teks, Gambar Placeholder)
     private void displayCurrentStep() {
         if (tutorialSteps.isEmpty()) {
             return;
@@ -164,23 +141,16 @@ public class TutorialGUI extends JFrame {
 
         TutorialStep step = tutorialSteps.get(currentStepIndex);
 
-        // Update Judul di bagian navigasi bawah
         lblStepTitle.setText(step.title);
 
-        // Update Deskripsi di panel kanan
         txtDesc.setText("PANDUAN DETAIL:\n\n" + step.description);
-        txtDesc.setCaretPosition(0); // Scroll ke atas
+        txtDesc.setCaretPosition(0); 
 
-        // Update Gambar Ilustrasi di panel kiri (Placeholder Teks sementara)
-        // Nantinya ganti dengan: lblIlustrasi.setIcon(new ImageIcon("path/to/" + step.imagePlaceholderText));
         lblIlustrasi.setText("ILUSTRASI: " + step.imagePlaceholderText);
     }
 
-    // ========================================================
-    // DATA KATA-KATA TUTORIAL BERBASIS LANGKAH (Step-by-Step)
-    // ========================================================
     private void initTutorialData() {
-        // [Langkah 1] Halaman Utama
+      
         tutorialSteps.add(new TutorialStep(
                 "1. Halaman Utama (Main Menu)",
                 "Selamat Datang di Resto Tycoon!\n\n"
@@ -188,10 +158,9 @@ public class TutorialGUI extends JFrame {
                 + "- Klik 'PERSIPAN' untuk belanja bahan, set menu resep, cek stok gudang, dan pasang booster jimat.\n"
                 + "- Klik 'BUKA RESTORAN' untuk memulai simulasi hari di mana pelanggan akan berdatangan.\n"
                 + "- Klik 'SAVE & EXIT' untuk menyimpan seluruh progress Level, Uang, Stok, dan Jimat Anda.",
-                "menu_utama.png" // Placeholder nama file gambar ilustrasi
+                "menu_utama.png"
         ));
 
-        // [Langkah 2] Pasar (Persiapan 1)
         tutorialSteps.add(new TutorialStep(
                 "2. Persiapan: Pasar (Belanja)",
                 "Langkah pertama adalah memastikan restoran Anda memiliki bahan baku.\n\n"
@@ -202,7 +171,6 @@ public class TutorialGUI extends JFrame {
                 "pasar.png"
         ));
 
-        // [Langkah 3] Dapur (Persiapan 2)
         tutorialSteps.add(new TutorialStep(
                 "3. Persiapan: Dapur (Set Menu)",
                 "Tentukan hidangan apa saja yang bisa dipesan pelanggan hari ini!\n\n"
@@ -213,7 +181,6 @@ public class TutorialGUI extends JFrame {
                 "dapur.png"
         ));
 
-        // [Langkah 4] Gudang (Persiapan 3)
         tutorialSteps.add(new TutorialStep(
                 "4. Persiapan: Cek Stok Gudang",
                 "Pastikan stok bahan mencukupi sebelum restoran dibuka!\n\n"
@@ -222,7 +189,6 @@ public class TutorialGUI extends JFrame {
                 "gudang.png"
         ));
 
-        // [Langkah 5] Toko Jimat (Persiapan 4)
         tutorialSteps.add(new TutorialStep(
                 "5. Persiapan: Toko Jimat (Booster)",
                 "Jimat memberikan efek pasif yang menguntungkan!\n\n"
@@ -232,7 +198,6 @@ public class TutorialGUI extends JFrame {
                 "toko_jimat.png"
         ));
 
-        // [Langkah 6] Buka Restoran (Simulasi)
         tutorialSteps.add(new TutorialStep(
                 "6. Buka Restoran (Simulasi Hari)",
                 "Saatnya simulasi berjalan secara otomatis!\n\n"
@@ -241,8 +206,6 @@ public class TutorialGUI extends JFrame {
                 + "- Jangan lupa, jimat yang Anda pasang akan memberikan efek di sini.",
                 "buka_restoran.png"
         ));
-
-        // [Langkah 7] Simpan Progres
         tutorialSteps.add(new TutorialStep(
                 "7. Simpan Progres (Save Game)",
                 "Jangan kehilangan progress Level dan Uang Anda!\n\n"
@@ -252,11 +215,10 @@ public class TutorialGUI extends JFrame {
         ));
     }
 
-    // Main method untuk tes mandiri
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Restoran dummy = new Restoran();
-            dummy.tambahUang(500000); // Beri uang fiktif agar status bar terlihat nyata
+            dummy.tambahUang(500000);
             new TutorialGUI(dummy).setVisible(true);
         });
     }
