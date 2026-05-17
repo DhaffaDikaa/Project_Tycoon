@@ -69,10 +69,13 @@ public class PasarGUI extends JFrame {
         centerPanel.setOpaque(false);
 
         ImageIcon icon = new ImageIcon(getClass().getResource("/asset/tokosembako.png"));
+        Image img = icon.getImage();
+        Image resize = img.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(resize);
+
         JLabel lblIlustrasi = new JLabel(icon);
-        lblIlustrasi.setBounds(30, 30, 445, 425);
-        lblIlustrasi.setForeground(null);
-        lblIlustrasi.setOpaque(false);
+        lblIlustrasi.setBounds(10, 15, 475, 425);
+        lblIlustrasi.setForeground(Color.WHITE);
 
         // TERMINAL IMAGE
         ImageIcon iconTerminal = new ImageIcon(getClass().getResource("/asset/terminal.png"));
@@ -187,9 +190,9 @@ public class PasarGUI extends JFrame {
 
         //IconBack
         ImageIcon iconBack = new ImageIcon(getClass().getResource("/asset/back.png"));
-        Image img = iconBack.getImage();
-        Image resize = img.getScaledInstance(150, 40, Image.SCALE_SMOOTH);
-        iconBack = new ImageIcon(resize);
+        Image img5 = iconBack.getImage();
+        Image resize5 = img5.getScaledInstance(150, 40, Image.SCALE_SMOOTH);
+        iconBack = new ImageIcon(resize5);
 
         JButton btnKembali = new JButton(iconBack);
 

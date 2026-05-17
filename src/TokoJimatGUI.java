@@ -65,10 +65,13 @@ public class TokoJimatGUI extends JFrame {
 
         // Label ilustrasi kiri
         ImageIcon icon = new ImageIcon(getClass().getResource("/asset/tokojimat.png"));
+        Image img = icon.getImage();
+        Image resize = img.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(resize);
+
         JLabel lblIlustrasi = new JLabel(icon);
-        lblIlustrasi.setBounds(10, 30, 425, 425);
-        lblIlustrasi.setForeground(null);
-        lblIlustrasi.setOpaque(false);
+        lblIlustrasi.setBounds(10, 15, 425, 425);
+        lblIlustrasi.setForeground(Color.WHITE);
 
         // Terminal background image
         ImageIcon iconTerminal = new ImageIcon(getClass().getResource("/asset/terminal.png"));

@@ -69,11 +69,14 @@ public class DapurGUI extends JFrame {
 
 
         // ILUSTRASI KIRI
-        ImageIcon ilustrasi = new ImageIcon(getClass().getResource("/asset/dapur.png"));
-        JLabel lblIlustrasi = new JLabel(ilustrasi);
-        lblIlustrasi.setBounds(10, 30, 425, 425);
-        lblIlustrasi.setForeground(null);
-        lblIlustrasi.setOpaque(false);
+        ImageIcon icon = new ImageIcon(getClass().getResource("/asset/dapur.png"));
+        Image img = icon.getImage();
+        Image resize = img.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(resize);
+
+        JLabel lblIlustrasi = new JLabel(icon);
+        lblIlustrasi.setBounds(10, 15, 425, 425);
+        lblIlustrasi.setForeground(Color.WHITE);
 
 
         // TERMINAL IMAGE
@@ -154,9 +157,9 @@ public class DapurGUI extends JFrame {
 
         //IconBack
         ImageIcon iconBack = new ImageIcon(getClass().getResource("/asset/back.png"));
-        Image img = iconBack.getImage();
-        Image resize = img.getScaledInstance(150, 40, Image.SCALE_SMOOTH);
-        iconBack = new ImageIcon(resize);
+        Image img5= iconBack.getImage();
+        Image resize5 = img5.getScaledInstance(150, 40, Image.SCALE_SMOOTH);
+        iconBack = new ImageIcon(resize5);
 
         JButton btnKembali = new JButton(iconBack);
 

@@ -67,8 +67,12 @@ public class BukaRestoranGUI extends JFrame {
 
         // Label ilustrasi kiri
         ImageIcon icon = new ImageIcon(getClass().getResource("/asset/dapur1.png"));
+        Image img = icon.getImage();
+        Image resize = img.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(resize);
+
         JLabel lblIlustrasi = new JLabel(icon);
-        lblIlustrasi.setBounds(10, 35, 425, 425);
+        lblIlustrasi.setBounds(10, 15, 425, 425);
         lblIlustrasi.setForeground(Color.WHITE);
 
         // Terminal background image

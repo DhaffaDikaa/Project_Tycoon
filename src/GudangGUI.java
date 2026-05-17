@@ -69,10 +69,13 @@ public class GudangGUI extends JFrame {
 
         // ILUSTRASI KIRI
         ImageIcon icon = new ImageIcon(getClass().getResource("/asset/gudang.png"));
+        Image img5 = icon.getImage();
+        Image resize5 = img5.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(resize5);
+
         JLabel lblIlustrasi = new JLabel(icon);
-        lblIlustrasi.setBounds(10, 30, 425, 425);
-        lblIlustrasi.setForeground(null);
-        lblIlustrasi.setOpaque(false);
+        lblIlustrasi.setBounds(10, 15, 425, 425);
+        lblIlustrasi.setForeground(Color.WHITE);
 
 
         // TERMINAL IMAGE
