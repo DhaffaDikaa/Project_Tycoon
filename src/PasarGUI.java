@@ -108,8 +108,6 @@ public class PasarGUI extends JFrame {
         scrollTerminal.getViewport().setOpaque(false);
 
         terminalArea.setOpaque(false);
-
-
         terminalBg.add(scrollTerminal);
 
 
