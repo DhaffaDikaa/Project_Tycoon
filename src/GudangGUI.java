@@ -38,27 +38,85 @@ public class GudangGUI extends JFrame {
         add(topPanel, BorderLayout.NORTH);
 
         // --- 2. PANEL TENGAH (Ilustrasi & Terminal) ---
-        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        JPanel centerPanel = new JPanel(new BorderLayout(15, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel lblIlustrasi = new JLabel("GAMBAR ILUSTRASI GUDANG", SwingConstants.CENTER);
-        lblIlustrasi.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        // ==========================================================
+        // TRIK MENGGAMBAR GAMBAR AGAR RESPONSITIF (IKUT MEMBESAR)
+        // ==========================================================
+        JLabel lblIlustrasi = new JLabel("", SwingConstants.CENTER) {
+            private Image imgAsli;
 
+            // Blok inisialisasi: Memuat gambar aslinya sekali saja saat dibuka
+            {
+                try {
+                    imgAsli = new ImageIcon("image/Dapur.png").getImage();
+                } catch (Exception e) {
+                    System.out.println("Gambar tidak ditemukan.");
+                }
+            }
+
+            // Override paintComponent agar gambar digambar ulang setiap kali ukuran window berubah
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (imgAsli != null) {
+                    int panelW = getWidth();
+                    int panelH = getHeight();
+                    int imgW = imgAsli.getWidth(this);
+                    int imgH = imgAsli.getHeight(this);
+
+                    if (imgW > 0 && imgH > 0) {
+                        // Menghitung rasio agar gambar membesar proporsional (tidak gepeng)
+                        double ratio = Math.min((double) panelW / imgW, (double) panelH / imgH);
+                        int newW = (int) (imgW * ratio);
+                        int newH = (int) (imgH * ratio);
+
+                        // Menghitung kordinat X dan Y agar gambar tetap di tengah (Center)
+                        int x = (panelW - newW) / 2;
+                        int y = (panelH - newH) / 2;
+
+                        // Menggambar gambarnya secara langsung (Graphics)
+                        g.drawImage(imgAsli, x, y, newW, newH, this);
+                    }
+                } else {
+                    setText("GAMBAR TIDAK DITEMUKAN");
+                }
+            }
+        };
+        lblIlustrasi.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+
+        // --- Bagian Terminal Kanan ---
         terminalArea = new JTextArea();
         terminalArea.setEditable(false);
-        JScrollPane scrollTerminal = new JScrollPane(terminalArea);
-        scrollTerminal.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        terminalArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        terminalArea.setMargin(new Insets(10, 10, 10, 10));
 
-        centerPanel.add(lblIlustrasi);
-        centerPanel.add(scrollTerminal);
+        JScrollPane scrollTerminal = new JScrollPane(terminalArea);
+        scrollTerminal.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+
+        // Kunci lebar terminal menjadi 350px (dilebarkan sedikit agar teks lebih leluasa)
+        scrollTerminal.setPreferredSize(new Dimension(350, 0));
+
+        // Masukkan komponen dengan menentukan lokasinya (CENTER & EAST)
+        centerPanel.add(lblIlustrasi, BorderLayout.CENTER);
+        centerPanel.add(scrollTerminal, BorderLayout.EAST);
+
         add(centerPanel, BorderLayout.CENTER);
 
         // --- 3. PANEL BAWAH (Tombol Kembali) ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
-        bottomPanel.setPreferredSize(new Dimension(0, 60));
+        bottomPanel.setPreferredSize(new Dimension(0, 70));
 
         JButton btnKembali = new JButton("KEMBALI");
-        btnKembali.setPreferredSize(new Dimension(200, 40));
+        btnKembali.setPreferredSize(new Dimension(200, 45));
+
+        btnKembali.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnKembali.setBackground(new Color(231, 76, 60));
+        btnKembali.setForeground(Color.WHITE);
+        btnKembali.setFocusPainted(false);
+        btnKembali.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         btnKembali.addActionListener(e -> this.dispose());
 
         bottomPanel.add(btnKembali);
@@ -75,13 +133,9 @@ public class GudangGUI extends JFrame {
         lblKapasitas.setText("KAPASITAS : " + restoran.getKapasitas());
     }
 
-    // ========================================================
-    // LOGIKA MEMBACA DATA STOK ASLI DARI OBJEK RESTORAN
-    // ========================================================
     private void tampilkanStok() {
-        terminalArea.setText("=== TERMINAL : STOK GUDANG SAAT INI ===\n\n");
+        terminalArea.setText("STOK GUDANG SAAT INI\n\n");
 
-        // Membaca map stok dari class Restoran
         if (restoran.stok == null || restoran.stok.isEmpty()) {
             terminalArea.append("Gudang kosong! Anda belum membeli bahan baku apapun di Pasar.\n");
         } else {
