@@ -1,0 +1,5 @@
+ ImageIcon iconPersiapan = new ImageIcon(getClass().getResource("/asset/opening/persiapan.png"));
+
+ Image img = iconPersiapan.getImage();
+ Image resize = img.getScaledInstance(300, 60, Image.SCALE_SMOOTH);
+ iconPersiapan = new ImageIcon(resize);
