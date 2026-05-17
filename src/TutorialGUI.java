@@ -11,6 +11,14 @@ public class TutorialGUI extends JFrame {
     private JTextArea txtDesc;
     private JButton btnPrev, btnNext;
 
+    private void fixMacTransparency() {
+        System.setProperty("apple.awt.application.appearance", "system");
+        UIManager.put("ScrollPane.background", new Color(0, 0, 0, 0));
+        UIManager.put("Viewport.background",   new Color(0, 0, 0, 0));
+        UIManager.put("ScrollBar.thumb",       new Color(100, 100, 100));
+        UIManager.put("ScrollBar.track",       new Color(0, 0, 0, 0));
+    }
+
     // Data Tutorial Berbasis Langkah
     private List<TutorialStep> tutorialSteps;
     private int currentStepIndex = 0;
@@ -207,6 +215,7 @@ public class TutorialGUI extends JFrame {
         // --- 5. INITIALIZE DISPLAY ---
         updateStatusBar();
         displayCurrentStep(); // Tampilkan langkah pertama
+        fixMacTransparency();
     }
 
     private void updateStatusBar() {

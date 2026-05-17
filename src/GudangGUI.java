@@ -8,10 +8,18 @@ public class GudangGUI extends JFrame {
     private JLabel lblLevel, lblUang, lblKapasitas;
     private JTextArea terminalArea;
 
+    private void fixMacTransparency() {
+        System.setProperty("apple.awt.application.appearance", "system");
+        UIManager.put("ScrollPane.background", new Color(0, 0, 0, 0));
+        UIManager.put("Viewport.background",   new Color(0, 0, 0, 0));
+        UIManager.put("ScrollBar.thumb",       new Color(100, 100, 100));
+        UIManager.put("ScrollBar.track",       new Color(0, 0, 0, 0));
+    }
+
     public GudangGUI(Restoran restoran) {
         this.restoran = restoran;
 
-        // ── Background Panel ───────────────────────────────────────────────────
+
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
         JPanel bgPanel = new JPanel() {
@@ -132,6 +140,7 @@ public class GudangGUI extends JFrame {
         // --- 4. TAMPILKAN DATA ASLI ---
         updateStatusBar();
         tampilkanStok();
+        fixMacTransparency();
     }
 
     private void updateStatusBar() {

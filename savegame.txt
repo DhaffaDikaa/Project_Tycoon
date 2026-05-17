@@ -1,12 +1,11 @@
 4
-669000
+774000
 ---STOK---
-Teh,10
-Telur,1
 Beras,59
+Telur,1
+Teh,0
 ---MENU---
-Telur Dadar
 Es Teh
-Nasi Putih
+Telur Dadar
 ---JIMAT---
 ---END---

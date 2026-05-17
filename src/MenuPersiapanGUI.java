@@ -9,6 +9,14 @@ public class MenuPersiapanGUI extends JFrame {
     private Restoran restoran;
     private JLabel lblLevel, lblUang, lblKapasitas;
 
+    private void fixMacTransparency() {
+        System.setProperty("apple.awt.application.appearance", "system");
+        UIManager.put("ScrollPane.background", new Color(0, 0, 0, 0));
+        UIManager.put("Viewport.background",   new Color(0, 0, 0, 0));
+        UIManager.put("ScrollBar.thumb",       new Color(100, 100, 100));
+        UIManager.put("ScrollBar.track",       new Color(0, 0, 0, 0));
+    }
+
     public MenuPersiapanGUI(Restoran restoran) {
         this.restoran = restoran;
 
@@ -137,6 +145,7 @@ public class MenuPersiapanGUI extends JFrame {
         });
         // Memanggil data pertama kali
         updateStatusBar();
+        fixMacTransparency();
     }
 
     // Method untuk sinkronisasi teks status dengan data asli restoran

@@ -118,8 +118,7 @@ public class Restoran implements Serializable {
         }else{
             System.out.println("Uang tidak cukup untuk beli bahan! CARII UANG LAGEEE");
         }
-        
-        
+
     }
 
     public String cekBahan(){

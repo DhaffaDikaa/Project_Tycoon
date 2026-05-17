@@ -9,7 +9,15 @@ public class BukaRestoranGUI extends JFrame {
     private Restoran restoran;
     private JLabel lblLevel, lblUang, lblKapasitas;
     private JTextArea terminalArea;
-    private PrintStream originalSystemOut; // Untuk menyimpan System.out asli
+    private PrintStream originalSystemOut;// Untuk menyimpan System.out asli
+
+    private void fixMacTransparency() {
+        System.setProperty("apple.awt.application.appearance", "system");
+        UIManager.put("ScrollPane.background", new Color(0, 0, 0, 0));
+        UIManager.put("Viewport.background",   new Color(0, 0, 0, 0));
+        UIManager.put("ScrollBar.thumb",       new Color(100, 100, 100));
+        UIManager.put("ScrollBar.track",       new Color(0, 0, 0, 0));
+    }
 
     public BukaRestoranGUI(Restoran restoran) {
         this.restoran = restoran;
@@ -145,6 +153,7 @@ public class BukaRestoranGUI extends JFrame {
 
         updateStatusBar();
         mulaiSimulasiThread(btnKembali);
+        fixMacTransparency();
     }
 
     private void updateStatusBar() {
@@ -231,5 +240,7 @@ public class BukaRestoranGUI extends JFrame {
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             });
         }).start();
+
+
     }
 }

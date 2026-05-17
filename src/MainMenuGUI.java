@@ -7,6 +7,14 @@ public class MainMenuGUI extends JFrame {
     private Restoran restoran;
     private Image backgroundImage;
 
+    private void fixMacTransparency() {
+        System.setProperty("apple.awt.application.appearance", "system");
+        UIManager.put("ScrollPane.background", new Color(0, 0, 0, 0));
+        UIManager.put("Viewport.background",   new Color(0, 0, 0, 0));
+        UIManager.put("ScrollBar.thumb",       new Color(100, 100, 100));
+        UIManager.put("ScrollBar.track",       new Color(0, 0, 0, 0));
+    }
+
     public MainMenuGUI(Restoran restoran) {
         this.restoran = restoran;
 
@@ -60,6 +68,7 @@ public class MainMenuGUI extends JFrame {
         buttonPanel.add(btnBukaRestoran);
         buttonPanel.add(btnSaveExit);
         buttonPanel.add(btnTutorial);
+
 
         // Membuat panel pembungkus (wrapper) menggunakan GridBagLayout 
         // Ini adalah trik rahasia agar buttonPanel posisinya persis di TENGAH layar
@@ -145,10 +154,9 @@ public class MainMenuGUI extends JFrame {
         btnBukaRestoran.setIcon(iconBuka);
         btnTutorial.setIcon(iconTutorial);
         btnSaveExit.setIcon(iconSave);
+
+        fixMacTransparency();
     }
-
-
-
 
     // Main Method untuk testing halaman ini
    
