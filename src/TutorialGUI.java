@@ -11,15 +11,15 @@ public class TutorialGUI extends JFrame {
     private JLabel lblIlustrasi, lblStepTitle;
     private JTextArea txtDesc;
     private JButton btnPrev, btnNext;
-
     private List<TutorialStep> tutorialSteps;
     private int currentStepIndex = 0;
+    private Image currentTutorialImage;
 
     private class TutorialStep {
 
         String title;
         String description;
-        String imagePlaceholderText; 
+        String imagePlaceholderText;
 
         TutorialStep(String title, String description, String imagePlaceholderText) {
             this.title = title;
@@ -31,10 +31,10 @@ public class TutorialGUI extends JFrame {
     public TutorialGUI(Restoran restoran) {
         this.restoran = restoran;
         this.tutorialSteps = new ArrayList<>();
-        initTutorialData(); 
+        initTutorialData();
 
         setTitle("Resto Tycoon - Panduan Tutorial Bermain");
-        setSize(950, 650); 
+        setSize(950, 650);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
@@ -54,27 +54,53 @@ public class TutorialGUI extends JFrame {
         lblKapasitas = new JLabel("", SwingConstants.CENTER);
         lblKapasitas.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
-        topPanel.add(lblTuto); 
+        topPanel.add(lblTuto);
         topPanel.add(lblLevel);
         topPanel.add(lblUang);
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        JPanel centerPanel = new JPanel(new BorderLayout(15, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        lblIlustrasi = new JLabel("GAMBAR ILUSTRASI", SwingConstants.CENTER);
-        lblIlustrasi.setFont(new Font("Arial", Font.ITALIC, 16));
-        lblIlustrasi.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        lblIlustrasi = new JLabel("", SwingConstants.CENTER) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (currentTutorialImage != null) {
+                    int panelW = getWidth();
+                    int panelH = getHeight();
+                    int imgW = currentTutorialImage.getWidth(this);
+                    int imgH = currentTutorialImage.getHeight(this);
+
+                    if (imgW > 0 && imgH > 0) {
+                        double ratio = Math.min((double) panelW / imgW, (double) panelH / imgH);
+                        int newW = (int) (imgW * ratio);
+                        int newH = (int) (imgH * ratio);
+
+                        int x = (panelW - newW) / 2;
+                        int y = (panelH - newH) / 2;
+
+                        g.drawImage(currentTutorialImage, x, y, newW, newH, this);
+                    }
+                }
+            }
+        };
+        lblIlustrasi.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+
         txtDesc = new JTextArea();
         txtDesc.setEditable(false);
         txtDesc.setFont(new Font("Monospaced", Font.PLAIN, 14));
         txtDesc.setLineWrap(true);
         txtDesc.setWrapStyleWord(true);
-        JScrollPane scrollDesc = new JScrollPane(txtDesc);
-        scrollDesc.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        txtDesc.setMargin(new Insets(10, 10, 10, 10));
 
-        centerPanel.add(lblIlustrasi);
-        centerPanel.add(scrollDesc);
+        JScrollPane scrollDesc = new JScrollPane(txtDesc);
+        scrollDesc.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+        scrollDesc.setPreferredSize(new Dimension(350, 0));
+
+        centerPanel.add(lblIlustrasi, BorderLayout.CENTER);
+        centerPanel.add(scrollDesc, BorderLayout.EAST);
         add(centerPanel, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel(new BorderLayout(0, 10));
@@ -83,6 +109,12 @@ public class TutorialGUI extends JFrame {
 
         JButton btnKembali = new JButton("KEMBALI");
         btnKembali.setPreferredSize(new Dimension(150, 40));
+        btnKembali.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnKembali.setBackground(new Color(231, 76, 60));
+        btnKembali.setForeground(Color.WHITE);
+        btnKembali.setFocusPainted(false);
+        btnKembali.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
         JPanel panelKembali = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelKembali.add(btnKembali);
         bottomPanel.add(panelKembali, BorderLayout.WEST);
@@ -92,10 +124,12 @@ public class TutorialGUI extends JFrame {
         btnPrev = new JButton("←");
         btnPrev.setFont(new Font("Arial", Font.BOLD, 24));
         btnPrev.setPreferredSize(new Dimension(80, 50));
+        btnPrev.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         btnNext = new JButton("→");
         btnNext.setFont(new Font("Arial", Font.BOLD, 24));
         btnNext.setPreferredSize(new Dimension(80, 50));
+        btnNext.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         lblStepTitle = new JLabel("NAMA STEP TUTORIAL", SwingConstants.CENTER);
         lblStepTitle.setFont(new Font("Arial", Font.BOLD, 18));
@@ -110,10 +144,10 @@ public class TutorialGUI extends JFrame {
 
         btnPrev.addActionListener(e -> navigateTutorial(-1));
         btnNext.addActionListener(e -> navigateTutorial(1));
-        btnKembali.addActionListener(e -> this.dispose()); 
+        btnKembali.addActionListener(e -> this.dispose());
 
         updateStatusBar();
-        displayCurrentStep(); 
+        displayCurrentStep();
     }
 
     private void updateStatusBar() {
@@ -144,13 +178,25 @@ public class TutorialGUI extends JFrame {
         lblStepTitle.setText(step.title);
 
         txtDesc.setText("PANDUAN DETAIL:\n\n" + step.description);
-        txtDesc.setCaretPosition(0); 
+        txtDesc.setCaretPosition(0);
 
-        lblIlustrasi.setText("ILUSTRASI: " + step.imagePlaceholderText);
+        try {
+            currentTutorialImage = new ImageIcon("image/" + step.imagePlaceholderText).getImage();
+            if (currentTutorialImage.getWidth(null) == -1) {
+                currentTutorialImage = null;
+                lblIlustrasi.setText("GAMBAR TIDAK DITEMUKAN");
+            } else {
+                lblIlustrasi.setText("");
+            }
+        } catch (Exception e) {
+            currentTutorialImage = null;
+            lblIlustrasi.setText("GAMBAR TIDAK DITEMUKAN");
+        }
+        lblIlustrasi.repaint();
     }
 
     private void initTutorialData() {
-      
+
         tutorialSteps.add(new TutorialStep(
                 "1. Halaman Utama (Main Menu)",
                 "Selamat Datang di Resto Tycoon!\n\n"

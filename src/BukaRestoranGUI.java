@@ -60,7 +60,7 @@ public class BukaRestoranGUI extends JFrame {
 
             {
                 try {
-                    imgAsli = new ImageIcon("image/Dapur.png").getImage();
+                    imgAsli = new ImageIcon("image/BukaRestoran.png").getImage();
                 } catch (Exception e) {
                 }
             }

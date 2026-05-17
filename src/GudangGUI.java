@@ -44,7 +44,7 @@ public class GudangGUI extends JFrame {
 
             {
                 try {
-                    imgAsli = new ImageIcon("image/Dapur.png").getImage();
+                    imgAsli = new ImageIcon("image/Gudang.png").getImage();
                 } catch (Exception e) {
                     System.out.println("Gambar tidak ditemukan.");
                 }

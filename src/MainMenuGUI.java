@@ -46,9 +46,45 @@ public class MainMenuGUI extends JFrame {
 
 
         btnBukaRestoran.addActionListener(e -> {
+            try {
 
-            new BukaRestoranGUI(restoran).setVisible(true);
+                if (restoran.getMenu() == null || restoran.getMenu().isEmpty()) {
+                    throw new MenuKosongException("Gagal Buka Restoran! Anda belum mendaftarkan menu apapun di resep.");
+                }
 
+                boolean adaStok = false;
+                if (restoran.stok != null) {
+                    for (int jumlahStok : restoran.stok.values()) {
+                        if (jumlahStok > 0) {
+                            adaStok = true;
+                            break; 
+                        }
+                    }
+                }
+
+                if (!adaStok) {
+                    throw new BahanBakuKosongException("Gagal Buka Restoran! Gudang Anda kosong total. Silakan belanja bahan baku terlebih dahulu!");
+                }
+
+                new BukaRestoranGUI(restoran).setVisible(true);
+
+            } catch (MenuKosongException ex) {
+        
+                JOptionPane.showMessageDialog(
+                        this,
+                        ex.getMessage(),
+                        "Peringatan Menu",
+                        JOptionPane.WARNING_MESSAGE
+                );
+            } catch (BahanBakuKosongException ex) {
+            
+                JOptionPane.showMessageDialog(
+                        this,
+                        ex.getMessage(),
+                        "Peringatan Logistik Gudang",
+                        JOptionPane.ERROR_MESSAGE 
+                );
+            }
            
         });
         btnSaveExit.addActionListener(e -> {

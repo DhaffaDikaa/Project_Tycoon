@@ -9,14 +9,14 @@ public class PasarGUI extends JFrame {
     private Restoran restoran;
     private JLabel lblLevel, lblUang, lblKapasitas;
     private JTextArea terminalArea;
-    private List<BahanBaku> bahanTersediaSaatIni; 
+    private List<BahanBaku> bahanTersediaSaatIni;
 
     public PasarGUI(Restoran restoran) {
         this.restoran = restoran;
         this.bahanTersediaSaatIni = new ArrayList<>();
 
         setTitle("Game Presto - Pasar (Beli Bahan Baku)");
-        setSize(1000, 600);
+        setSize(950, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
@@ -42,19 +42,57 @@ public class PasarGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        JPanel centerPanel = new JPanel(new BorderLayout(15, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel lblIlustrasi = new JLabel("GAMBAR ILUSTRASI PASAR", SwingConstants.CENTER);
-        lblIlustrasi.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        JLabel lblIlustrasi = new JLabel("", SwingConstants.CENTER) {
+            private Image imgAsli;
+
+            {
+                try {
+                    imgAsli = new ImageIcon("image/Pasar.png").getImage();
+                } catch (Exception e) {
+                    System.out.println("Gambar tidak ditemukan.");
+                }
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (imgAsli != null) {
+                    int panelW = getWidth();
+                    int panelH = getHeight();
+                    int imgW = imgAsli.getWidth(this);
+                    int imgH = imgAsli.getHeight(this);
+
+                    if (imgW > 0 && imgH > 0) {
+                        double ratio = Math.min((double) panelW / imgW, (double) panelH / imgH);
+                        int newW = (int) (imgW * ratio);
+                        int newH = (int) (imgH * ratio);
+
+                        int x = (panelW - newW) / 2;
+                        int y = (panelH - newH) / 2;
+
+                        g.drawImage(imgAsli, x, y, newW, newH, this);
+                    }
+                } else {
+                    setText("GAMBAR TIDAK DITEMUKAN");
+                }
+            }
+        };
+        lblIlustrasi.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
 
         terminalArea = new JTextArea();
         terminalArea.setEditable(false);
-        JScrollPane scrollTerminal = new JScrollPane(terminalArea);
-        scrollTerminal.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        terminalArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        terminalArea.setMargin(new Insets(10, 10, 10, 10));
 
-        centerPanel.add(lblIlustrasi);
-        centerPanel.add(scrollTerminal);
+        JScrollPane scrollTerminal = new JScrollPane(terminalArea);
+        scrollTerminal.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+        scrollTerminal.setPreferredSize(new Dimension(350, 0));
+
+        centerPanel.add(lblIlustrasi, BorderLayout.CENTER);
+        centerPanel.add(scrollTerminal, BorderLayout.EAST);
         add(centerPanel, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
@@ -69,8 +107,19 @@ public class PasarGUI extends JFrame {
         JButton btnBeli = new JButton("BELI");
         JButton btnKembali = new JButton("KEMBALI");
 
-        btnBeli.setPreferredSize(new Dimension(100, 50));
-        btnKembali.setPreferredSize(new Dimension(100, 50));
+        btnBeli.setPreferredSize(new Dimension(120, 45));
+        btnBeli.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnBeli.setBackground(new Color(46, 204, 113));
+        btnBeli.setForeground(Color.WHITE);
+        btnBeli.setFocusPainted(false);
+        btnBeli.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        btnKembali.setPreferredSize(new Dimension(120, 45));
+        btnKembali.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnKembali.setBackground(new Color(231, 76, 60));
+        btnKembali.setForeground(Color.WHITE);
+        btnKembali.setFocusPainted(false);
+        btnKembali.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         btnBeli.addActionListener(e -> {
             try {
@@ -83,9 +132,7 @@ public class PasarGUI extends JFrame {
 
                     if (restoran.getUang() >= totalHarga) {
                         restoran.kurangiUang(totalHarga);
-
                         restoran.stok.put(bahanDipilih, restoran.stok.getOrDefault(bahanDipilih, 0) + jumlahBeli);
-
                         terminalArea.append("✅ Berhasil membeli " + jumlahBeli + " " + bahanDipilih.getNama() + " (Total: Rp " + totalHarga + ")\n");
                         updateStatusBar();
                     } else {

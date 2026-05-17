@@ -1,12 +1,7 @@
-4
-810000
+1
+200000
 ---STOK---
-Teh,4
-Telur,0
-Beras,50
 ---MENU---
-Telur Dadar
-Es Teh
 Nasi Putih
 ---JIMAT---
 ---END---
