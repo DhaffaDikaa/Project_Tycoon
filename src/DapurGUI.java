@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +13,9 @@ public class DapurGUI extends JFrame {
     public DapurGUI(Restoran restoran) {
         this.restoran = restoran;
         this.menuTersediaSaatIni = new ArrayList<>();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        //IconBg
+        // ── Background Panel ───────────────────────────────────────────────────
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
         JPanel bgPanel = new JPanel() {
@@ -25,7 +25,6 @@ public class DapurGUI extends JFrame {
                 g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
             }
         };
-
         bgPanel.setLayout(new BorderLayout());
         setContentPane(bgPanel);
 
@@ -40,7 +39,7 @@ public class DapurGUI extends JFrame {
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         topPanel.setOpaque(false);
 
-        JLabel lblTitle = new JLabel("SIMULASI BUKA RESTORAN", SwingConstants.CENTER);
+        JLabel lblTitle = new JLabel("DAPUR : SET MENU", SwingConstants.CENTER);
         lblTitle.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         lblTitle.setForeground(Color.WHITE);
 
@@ -62,111 +61,100 @@ public class DapurGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // --- 2. PANEL TENGAH (Ilustrasi & Terminal) ---
-        // PANEL TENGAH
-        JPanel centerPanel = new JPanel(null);
+        // ── 2. PANEL TENGAH — GridLayout agar scale saat MAXIMIZED_BOTH ────────
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         centerPanel.setOpaque(false);
 
+        // ── Kiri: Panel ilustrasi dapur — gambar skala via paintComponent ───────
+        Image imgIlustrasiRaw = new ImageIcon(
+                getClass().getResource("/asset/dapur.png")).getImage();
 
-        // ILUSTRASI KIRI
-        ImageIcon icon = new ImageIcon(getClass().getResource("/asset/dapur.png"));
-        Image img = icon.getImage();
-        Image resize = img.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(resize);
+        JPanel ilustrasiPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgIlustrasiRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        ilustrasiPanel.setOpaque(false);
 
-        JLabel lblIlustrasi = new JLabel(icon);
-        lblIlustrasi.setBounds(10, 15, 425, 425);
-        lblIlustrasi.setForeground(Color.WHITE);
+        // ── Kanan: Panel terminal — frame terminal.png skala via paintComponent ──
+        Image imgTerminalRaw = new ImageIcon(
+                getClass().getResource("/asset/terminal.png")).getImage();
 
-
-        // TERMINAL IMAGE
-        ImageIcon iconTerminal = new ImageIcon(getClass().getResource("/asset/terminal.png"));
-
-        Image img2 = iconTerminal.getImage();
-        Image resize2 = img2.getScaledInstance(425, 425, Image.SCALE_SMOOTH);
-
-        iconTerminal = new ImageIcon(resize2);
-
-        JLabel terminalBg = new JLabel(iconTerminal);
-        terminalBg.setLayout(null);
-
-        terminalBg.setBounds(440, 25, 425, 425);
+        JPanel terminalPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgTerminalRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        terminalPanel.setOpaque(false);
+        // Padding dalam agar teks tidak menempel bingkai gambar terminal
+        terminalPanel.setBorder(BorderFactory.createEmptyBorder(55, 45, 60, 45));
 
         // TEXT AREA
         terminalArea = new JTextArea();
-
         terminalArea.setEditable(false);
         terminalArea.setOpaque(false);
-
         terminalArea.setForeground(Color.GREEN);
-
         terminalArea.setFont(new Font("Monospaced", Font.BOLD, 10));
 
-        // posisi isi terminal
-        terminalArea.setBounds(40, 60, 330, 300);
         JScrollPane scrollTerminal = new JScrollPane(terminalArea);
-        scrollTerminal.setBounds(40, 60, 330, 280);
         scrollTerminal.setOpaque(false);
         scrollTerminal.getViewport().setOpaque(false);
+        scrollTerminal.setBorder(null);
 
-        terminalArea.setOpaque(false);
+        terminalPanel.add(scrollTerminal, BorderLayout.CENTER);
 
-        terminalBg.add(scrollTerminal);
-
-
-        centerPanel.add(lblIlustrasi);
-        centerPanel.add(terminalBg);
-
+        centerPanel.add(ilustrasiPanel);
+        centerPanel.add(terminalPanel);
         add(centerPanel, BorderLayout.CENTER);
-
 
         // --- 3. PANEL BAWAH (Input Box & Tombol) ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
         bottomPanel.setPreferredSize(new Dimension(0, 80));
+        bottomPanel.setOpaque(false);
 
-        //JLabel lblInstruksi = new JLabel("<html><center>MASUKAN NOMOR MENU<br>YANG HENDAK DI AKTIF/NON-AKTIFKAN</center></html>");
-
-        //Textfield
+        // Textfield berikon
         ImageIcon iconField = new ImageIcon(getClass().getResource("/asset/dapur/kosong.png"));
-
         Image img4 = iconField.getImage();
         Image resize4 = img4.getScaledInstance(165, 45, Image.SCALE_SMOOTH);
-
         iconField = new ImageIcon(resize4);
 
         JLabel labelField = new JLabel(iconField);
         labelField.setLayout(null);
 
         JTextField txtFieldBox = new JTextField();
-
         txtFieldBox.setBounds(20, 5, 120, 40);
-
         txtFieldBox.setForeground(Color.WHITE);
         txtFieldBox.setOpaque(false);
         txtFieldBox.setBorder(null);
         txtFieldBox.setHorizontalAlignment(JTextField.CENTER);
-
         labelField.add(txtFieldBox);
 
-        //IconPilih
+        // IconPilih
         ImageIcon iconPilih = new ImageIcon(getClass().getResource("/asset/dapur/pilihMenu.png"));
         Image img3 = iconPilih.getImage();
         Image resize3 = img3.getScaledInstance(165, 40, Image.SCALE_SMOOTH);
         iconPilih = new ImageIcon(resize3);
         JButton btnPilihMenu = new JButton(iconPilih);
+        btnPilihMenu.setPreferredSize(new Dimension(150, 40));
+        btnPilihMenu.setBorderPainted(false);
+        btnPilihMenu.setContentAreaFilled(false);
+        btnPilihMenu.setFocusPainted(false);
 
-        //IconBack
+        // IconBack
         ImageIcon iconBack = new ImageIcon(getClass().getResource("/asset/back.png"));
-        Image img5= iconBack.getImage();
+        Image img5 = iconBack.getImage();
         Image resize5 = img5.getScaledInstance(150, 40, Image.SCALE_SMOOTH);
         iconBack = new ImageIcon(resize5);
-
         JButton btnKembali = new JButton(iconBack);
-
-
-        btnPilihMenu.setPreferredSize(new Dimension(150, 40));
         btnKembali.setPreferredSize(new Dimension(150, 40));
-        //labelField.setPreferredSize(new Dimension(150, 40));
+        btnKembali.setBorderPainted(false);
+        btnKembali.setContentAreaFilled(false);
+        btnKembali.setFocusPainted(false);
 
         // ========================================================
         // LOGIKA ASLI setMenuRestoran() PINDAH KE SINI
@@ -206,7 +194,7 @@ public class DapurGUI extends JFrame {
         updateStatusBar();
         tampilkanDaftarMenu();
 
-        //Transparan
+        // Transparan
         topPanel.setOpaque(false);
         centerPanel.setOpaque(false);
         terminalArea.setOpaque(false);

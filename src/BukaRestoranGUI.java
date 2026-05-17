@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.*;
 
@@ -15,7 +14,7 @@ public class BukaRestoranGUI extends JFrame {
     public BukaRestoranGUI(Restoran restoran) {
         this.restoran = restoran;
 
-        // Background Panel (sama seperti DapurGUI)
+        // ── Background Panel ───────────────────────────────────────────────────
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
         JPanel bgPanel = new JPanel() {
@@ -30,11 +29,12 @@ public class BukaRestoranGUI extends JFrame {
 
         setTitle("Game Presto - Simulasi Buka Restoran");
         setSize(900, 600);
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Buka langsung penuh
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Cegah tutup saat simulasi jalan
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // ── 1. PANEL ATAS (Status Bar)
+        // ── 1. PANEL ATAS (Status Bar) ─────────────────────────────────────────
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         topPanel.setOpaque(false);
@@ -61,29 +61,38 @@ public class BukaRestoranGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        //2. PANEL TENGAH (Ilustrasi & Terminal)
-        JPanel centerPanel = new JPanel(null);
+        // ── 2. PANEL TENGAH — GridLayout agar scale saat MAXIMIZED_BOTH ────────
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         centerPanel.setOpaque(false);
 
-        // Label ilustrasi kiri
-        ImageIcon icon = new ImageIcon(getClass().getResource("/asset/dapur1.png"));
-        Image img = icon.getImage();
-        Image resize = img.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(resize);
+        // ── Kiri: Panel ilustrasi — gambar skala mengikuti ukuran panel ─────────
+        Image imgIlustrasiRaw = new ImageIcon(
+                getClass().getResource("/asset/dapur1.png")).getImage();
 
-        JLabel lblIlustrasi = new JLabel(icon);
-        lblIlustrasi.setBounds(10, 15, 425, 425);
-        lblIlustrasi.setForeground(Color.WHITE);
+        JPanel ilustrasiPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgIlustrasiRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        ilustrasiPanel.setOpaque(false);
 
-        // Terminal background image
-        ImageIcon iconTerminal = new ImageIcon(getClass().getResource("/asset/terminal.png"));
-        Image imgTerminal = iconTerminal.getImage();
-        Image resizeTerminal = imgTerminal.getScaledInstance(425, 425, Image.SCALE_SMOOTH);
-        iconTerminal = new ImageIcon(resizeTerminal);
+        // ── Kanan: Panel terminal — frame terminal.png skala via paintComponent ──
+        Image imgTerminalRaw = new ImageIcon(
+                getClass().getResource("/asset/terminal.png")).getImage();
 
-        JLabel terminalBg = new JLabel(iconTerminal);
-        terminalBg.setLayout(null);
-        terminalBg.setBounds(440, 25, 425, 425);
+        JPanel terminalPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgTerminalRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        terminalPanel.setOpaque(false);
+        // Padding dalam agar teks tidak menempel bingkai gambar terminal
+        terminalPanel.setBorder(BorderFactory.createEmptyBorder(55, 45, 60, 45));
 
         // Text area di dalam terminal
         terminalArea = new JTextArea();
@@ -93,14 +102,14 @@ public class BukaRestoranGUI extends JFrame {
         terminalArea.setFont(new Font("Monospaced", Font.BOLD, 10));
 
         JScrollPane scrollTerminal = new JScrollPane(terminalArea);
-        scrollTerminal.setBounds(40, 60, 350, 350);
         scrollTerminal.setOpaque(false);
         scrollTerminal.getViewport().setOpaque(false);
+        scrollTerminal.setBorder(null);
 
-        terminalBg.add(scrollTerminal);
+        terminalPanel.add(scrollTerminal, BorderLayout.CENTER);
 
-        centerPanel.add(lblIlustrasi);
-        centerPanel.add(terminalBg);
+        centerPanel.add(ilustrasiPanel);
+        centerPanel.add(terminalPanel);
         add(centerPanel, BorderLayout.CENTER);
 
         // ── 3. PANEL BAWAH (Tombol Kembali) ───────────────────────────────────
