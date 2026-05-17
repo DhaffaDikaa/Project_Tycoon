@@ -72,6 +72,10 @@ public class Restoran implements Serializable {
         return hari;
     }
 
+    public void tambahHari(){
+        hari++;
+    }
+
     public void tambahUang(int uang){
         this.uang += uang;
     }

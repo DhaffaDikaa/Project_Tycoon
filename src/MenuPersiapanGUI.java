@@ -14,10 +14,12 @@ public class MenuPersiapanGUI extends JFrame {
 
         // Pengaturan dasar Frame
         setTitle("Game Presto - Fase Persiapan");
-        setSize(900, 600);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setResizable(false);
 
         // --- 1. PANEL ATAS (Status Bar) ---
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
@@ -43,23 +45,43 @@ public class MenuPersiapanGUI extends JFrame {
 
         // --- 2. PANEL TENGAH (Peta Kota & Tombol) ---
         // Menggunakan Absolute Layout (null) agar tombol bisa ditaruh bebas
-        JPanel centerPanel = new JPanel();
+        //Bg
+        ImageIcon bg = new ImageIcon(getClass().getResource("/asset/Bg3.png"));
+        Image background = bg.getImage();
+
+        JPanel centerPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                // gambar full panel
+                g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
         centerPanel.setLayout(null);
 
+
         // Membuat tombol-tombol
-        JButton btnPasar = new JButton("TOMBOL KE PASAR");
-        JButton btnDapur = new JButton("TOMBOL KE DAPUR");
-        JButton btnGudang = new JButton("TOMBOL KE GUDANG");
-        JButton btnJimat = new JButton("TOMBOL KE TOKO JIMAT");
-        JButton btnKembali = new JButton("KEMBALI KE MAIN MENU");
+        JButton btnPasar = new JButton();
+        JButton btnDapur = new JButton();
+        JButton btnGudang = new JButton();
+        JButton btnJimat = new JButton();
+        JButton btnKembali = new JButton();
 
         // Mengatur posisi (X, Y) dan ukuran (Lebar, Tinggi) dari masing-masing tombol
         // Angka-angka ini disesuaikan kasar dengan letak bangunan di gambarmu
-        btnPasar.setBounds(80, 350, 180, 40);    // Kiri Bawah (Grocery)
-        btnDapur.setBounds(350, 300, 180, 40);   // Tengah (Restaurant)
-        btnGudang.setBounds(650, 180, 180, 40);  // Kanan Atas (Jendela/Gudang)
-        btnJimat.setBounds(650, 380, 180, 40);   // Kanan Bawah (Toko Jimat)
-        btnKembali.setBounds(20, 20, 180, 30);   // Pojok kiri atas untuk tombol kembali
+        btnPasar.setBounds(140, 160, 200, 150);    // Kiri Bawah (Grocery)
+        btnDapur.setBounds(460, 160, 200, 150);   // Tengah (Restaurant)
+        btnGudang.setBounds(1160, 180, 180, 170);  // Kanan Atas (Jendela/Gudang)
+        btnJimat.setBounds(140, 450, 180, 170);   // Kanan Bawah (Toko Jimat)
+        btnKembali.setBounds(640, 680, 200, 60);// Pojok kiri atas untuk tombol kembali
+
+        //transparan
+        JButton[] btn = {btnPasar, btnDapur,btnGudang,btnJimat,btnKembali};
+        for(JButton b : btn) {
+            b.setBorderPainted(false);
+            b.setOpaque(false);
+        }
+
 
         // Memasukkan tombol ke panel peta
         centerPanel.add(btnPasar);
@@ -95,7 +117,6 @@ public class MenuPersiapanGUI extends JFrame {
        
         btnPasar.addActionListener(e -> {
             PasarGUI guiPasar = new PasarGUI(restoran);
-
             // Listener ini berguna agar saat kita tutup Pasar, teks uang di Peta langsung terupdate
             guiPasar.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override

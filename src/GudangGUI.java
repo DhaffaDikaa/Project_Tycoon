@@ -12,24 +12,48 @@ public class GudangGUI extends JFrame {
     public GudangGUI(Restoran restoran) {
         this.restoran = restoran;
 
+        //IconBg
+        ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
+        Image background = bg.getImage();
+        JPanel bgPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+
+        bgPanel.setLayout(new BorderLayout());
+        setContentPane(bgPanel);
+
         setTitle("Resto Tycoon - Gudang");
         setSize(900, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new BorderLayout(10, 10));
+        setLayout(new BorderLayout(10, 15));
 
-        // --- 1. PANEL ATAS (Status Bar) ---
+        // ── 1. PANEL ATAS (Status Bar) ─────────────────────────────────────────
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        topPanel.setOpaque(false);
 
-        JLabel lblTitle = new JLabel("GUDANG : CEK STOK", SwingConstants.CENTER);
+
+
+        JLabel lblTitle = new JLabel("SIMULASI BUKA RESTORAN", SwingConstants.CENTER);
         lblTitle.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        lblTitle.setForeground(Color.WHITE);
+
         lblLevel = new JLabel("", SwingConstants.CENTER);
         lblLevel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        lblLevel.setForeground(Color.WHITE);
+
         lblUang = new JLabel("", SwingConstants.CENTER);
         lblUang.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        lblUang.setForeground(Color.WHITE);
+
         lblKapasitas = new JLabel("", SwingConstants.CENTER);
         lblKapasitas.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        lblKapasitas.setForeground(Color.WHITE);
 
         topPanel.add(lblTitle);
         topPanel.add(lblLevel);
@@ -38,27 +62,66 @@ public class GudangGUI extends JFrame {
         add(topPanel, BorderLayout.NORTH);
 
         // --- 2. PANEL TENGAH (Ilustrasi & Terminal) ---
-        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // PANEL TENGAH
+        JPanel centerPanel = new JPanel(null);
+        centerPanel.setOpaque(false);
 
-        JLabel lblIlustrasi = new JLabel("GAMBAR ILUSTRASI GUDANG", SwingConstants.CENTER);
-        lblIlustrasi.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
+        // ILUSTRASI KIRI
+        ImageIcon icon = new ImageIcon(getClass().getResource("/asset/gudang.png"));
+        JLabel lblIlustrasi = new JLabel(icon);
+        lblIlustrasi.setBounds(10, 30, 425, 425);
+        lblIlustrasi.setForeground(null);
+        lblIlustrasi.setOpaque(false);
+
+
+        // TERMINAL IMAGE
+        ImageIcon iconTerminal = new ImageIcon(getClass().getResource("/asset/terminal.png"));
+
+        Image img2 = iconTerminal.getImage();
+        Image resize2 = img2.getScaledInstance(425, 425, Image.SCALE_SMOOTH);
+
+        iconTerminal = new ImageIcon(resize2);
+
+        JLabel terminalBg = new JLabel(iconTerminal);
+        terminalBg.setLayout(null);
+
+        terminalBg.setBounds(440, 25, 425, 425);
+
+        // TEXT AREA
         terminalArea = new JTextArea();
+
         terminalArea.setEditable(false);
-        JScrollPane scrollTerminal = new JScrollPane(terminalArea);
-        scrollTerminal.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        terminalArea.setOpaque(false);
+
+        terminalArea.setForeground(Color.GREEN);
+
+        terminalArea.setFont(new Font("Monospaced", Font.BOLD, 14));
+
+        // posisi isi terminal
+        terminalArea.setBounds(40, 60, 330, 180);
+
+        terminalBg.add(terminalArea);
+
 
         centerPanel.add(lblIlustrasi);
-        centerPanel.add(scrollTerminal);
+        centerPanel.add(terminalBg);
+
         add(centerPanel, BorderLayout.CENTER);
+
 
         // --- 3. PANEL BAWAH (Tombol Kembali) ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         bottomPanel.setPreferredSize(new Dimension(0, 60));
 
-        JButton btnKembali = new JButton("KEMBALI");
-        btnKembali.setPreferredSize(new Dimension(200, 40));
+        //icon
+        ImageIcon iconBack = new ImageIcon(getClass().getResource("/asset/back.png"));
+        Image img = iconBack.getImage();
+        Image resize = img.getScaledInstance(150, 40, Image.SCALE_SMOOTH);
+        iconBack = new ImageIcon(resize);
+
+        JButton btnKembali = new JButton(iconBack);
+        btnKembali.setPreferredSize(new Dimension(150, 40));
         btnKembali.addActionListener(e -> this.dispose());
 
         bottomPanel.add(btnKembali);
@@ -67,6 +130,11 @@ public class GudangGUI extends JFrame {
         // --- 4. TAMPILKAN DATA ASLI ---
         updateStatusBar();
         tampilkanStok();
+
+        topPanel.setOpaque(false);
+        centerPanel.setOpaque(false);
+        terminalArea.setOpaque(false);
+        bottomPanel.setOpaque(false);
     }
 
     private void updateStatusBar() {

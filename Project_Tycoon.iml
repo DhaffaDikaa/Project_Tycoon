@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/Inheritance" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Interface Class" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Logic Game Class" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/GUI" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
