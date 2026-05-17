@@ -1,9 +1,9 @@
 4
-669000
+810000
 ---STOK---
-Teh,10
-Telur,1
-Beras,59
+Teh,4
+Telur,0
+Beras,50
 ---MENU---
 Telur Dadar
 Es Teh

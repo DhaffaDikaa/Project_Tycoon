@@ -80,7 +80,7 @@ public class MainMenuGUI extends JFrame {
             new BukaRestoranGUI(restoran).setVisible(true);
 
             // Menutup main menu
-            this.dispose();
+           
         });
         btnSaveExit.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Simpan dan keluar dari permainan?", "Pengesahan", JOptionPane.YES_NO_OPTION);
@@ -98,7 +98,7 @@ public class MainMenuGUI extends JFrame {
             new MenuPersiapanGUI(restoran).setVisible(true);
 
             // Menutup halaman main menu saat ini
-            this.dispose();
+    
         });
         btnTutorial.addActionListener(e -> {
             // Membuka frame tutorial berbasis langkah yang baru saja kita buat

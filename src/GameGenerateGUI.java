@@ -221,7 +221,4 @@ public class GameGenerateGUI {
         MASTER_MENU.add(cumiGorengTepung);
     }
 
-    // Nota: Fungsi seperti menuPersiapan(), beliBahan(), setMenuRestoran(), dan mulaiSimulasi()
-    // TIDAK DISERTAKAN DI SINI kerana keseluruhan input/output teks tersebut telah 
-    // digantikan oleh class-class GUI (seperti PasarGUI, DapurGUI, BukaRestoranGUI).
 }
