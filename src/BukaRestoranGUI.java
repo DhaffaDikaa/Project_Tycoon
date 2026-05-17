@@ -15,7 +15,7 @@ public class BukaRestoranGUI extends JFrame {
     public BukaRestoranGUI(Restoran restoran) {
         this.restoran = restoran;
 
-        // ── Background Panel (sama seperti DapurGUI) ──────────────────────────
+        // Background Panel (sama seperti DapurGUI)
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
         JPanel bgPanel = new JPanel() {
@@ -61,13 +61,14 @@ public class BukaRestoranGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // ── 2. PANEL TENGAH (Ilustrasi & Terminal) ────────────────────────────
+        //2. PANEL TENGAH (Ilustrasi & Terminal)
         JPanel centerPanel = new JPanel(null);
         centerPanel.setOpaque(false);
 
         // Label ilustrasi kiri
-        JLabel lblIlustrasi = new JLabel("GAMBAR ILUSTRASI RESTORAN");
-        lblIlustrasi.setBounds(120, 120, 250, 250);
+        ImageIcon icon = new ImageIcon(getClass().getResource("/asset/dapur1.png"));
+        JLabel lblIlustrasi = new JLabel(icon);
+        lblIlustrasi.setBounds(10, 35, 425, 425);
         lblIlustrasi.setForeground(Color.WHITE);
 
         // Terminal background image
@@ -88,7 +89,7 @@ public class BukaRestoranGUI extends JFrame {
         terminalArea.setFont(new Font("Monospaced", Font.BOLD, 10));
 
         JScrollPane scrollTerminal = new JScrollPane(terminalArea);
-        scrollTerminal.setBounds(40, 60, 330, 280);
+        scrollTerminal.setBounds(40, 60, 350, 350);
         scrollTerminal.setOpaque(false);
         scrollTerminal.getViewport().setOpaque(false);
 

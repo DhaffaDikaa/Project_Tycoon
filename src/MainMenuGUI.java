@@ -35,7 +35,7 @@ public class MainMenuGUI extends JFrame {
         // --- BAGIAN ATAS: JUDUL ---
         JLabel lblTitle = new JLabel("SELAMAT DATANG DI GAME PRESTO", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 32)); // Font sementara
-        lblTitle.setBorder(BorderFactory.createEmptyBorder(50, 0, 50, 0)); // Memberi jarak atas dan bawah
+        lblTitle.setBorder(BorderFactory.createEmptyBorder(80, 0, 50, 0)); // Memberi jarak atas dan bawah
         bgPanel.add(lblTitle, BorderLayout.NORTH);
 
         // --- BAGIAN TENGAH: TOMBOL-TOMBOL ---
