@@ -1,7 +1,8 @@
 4
-692000
+669000
 ---STOK---
-Telur,0
+Teh,10
+Telur,1
 Beras,59
 ---MENU---
 Telur Dadar
