@@ -5,33 +5,25 @@ import javax.swing.SwingUtilities;
 
 public class GameGenerateGUI {
 
-    // Database Master (Ditukar ke public agar boleh dibaca oleh file GUI yang lain)
+    // Database master
     public static List<BahanBaku> MASTER_BAHAN = new ArrayList<>();
     public static List<Menu> MASTER_MENU = new ArrayList<>();
 
-    // Pemalar Harga Jimat
     public static final int HARGA_CHARMING = 150000;
     public static final int HARGA_SECURITY = 100000;
     public static final int HARGA_CLEANER = 75000;
 
     public static void main(String[] args) {
-        // 1. Wajib panggil ini dahulu untuk mengisi pangkalan data permainan
         initDatabase();
-
-        // 2. Muatkan data restoran dari savegame.txt (Sama seperti versi terminal)
         Restoran r = muatGame();
 
-        // 3. Lancarkan GUI Menu Utama dan hantar objek Restoran ke dalamnya
         SwingUtilities.invokeLater(() -> {
             System.out.println("Memulakan Mod GUI...");
             new MainMenuGUI(r).setVisible(true);
         });
     }
 
-    // ==========================================
-    // FITUR SAVE & LOAD KEKAL SAMA (Supaya serasi dengan Mod Terminal)
-    // ==========================================
-    // Ditukar ke public static supaya butang "SAVE & EXIT" di MainMenuGUI boleh memanggilnya
+    // Save load
     public static void simpanGame(Restoran r) {
         try {
             FileWriter writer = new FileWriter("savegame.txt");
@@ -156,7 +148,7 @@ public class GameGenerateGUI {
         return null;
     }
 
-    // --- DATABASE DEVELOPER ---
+    // Database developer
     private static void initDatabase() {
         BahanBaku beras = new BahanBaku("Beras", 5000, 1);
         BahanBaku telur = new BahanBaku("Telur", 3000, 1);
@@ -220,8 +212,4 @@ public class GameGenerateGUI {
         cumiGorengTepung.tambahKomposisi(minyak, 1);
         MASTER_MENU.add(cumiGorengTepung);
     }
-
-    // Nota: Fungsi seperti menuPersiapan(), beliBahan(), setMenuRestoran(), dan mulaiSimulasi()
-    // TIDAK DISERTAKAN DI SINI kerana keseluruhan input/output teks tersebut telah 
-    // digantikan oleh class-class GUI (seperti PasarGUI, DapurGUI, BukaRestoranGUI).
 }

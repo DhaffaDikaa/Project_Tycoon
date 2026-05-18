@@ -12,7 +12,6 @@ public class SaveGame {
         }
     }
 
-    // Method untuk memuat game
     public static Restoran muat(String namaFile) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(namaFile))) {
             Restoran restoran = (Restoran) ois.readObject();

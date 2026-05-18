@@ -10,7 +10,7 @@ public class MainMenuGUI extends JFrame {
     public MainMenuGUI(Restoran restoran) {
         this.restoran = restoran;
 
-        //IconBg
+        // Icon bg
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
         JPanel bgPanel = new JPanel() {
@@ -24,30 +24,27 @@ public class MainMenuGUI extends JFrame {
         bgPanel.setLayout(new BorderLayout());
         setContentPane(bgPanel);
 
-        // Pengaturan dasar Window/Frame
         setTitle("Game Presto - Main Menu");
-        setSize(800, 600); // Ukuran window
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setLocationRelativeTo(null); // Agar window muncul persis di tengah layar
+        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // --- BAGIAN ATAS: JUDUL ---
+        // Bagian atas
         JLabel lblTitle = new JLabel("SELAMAT DATANG DI GAME PRESTO", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 32)); // Font sementara
-        lblTitle.setBorder(BorderFactory.createEmptyBorder(80, 0, 50, 0)); // Memberi jarak atas dan bawah
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 32));
+        lblTitle.setBorder(BorderFactory.createEmptyBorder(80, 0, 50, 0));
         bgPanel.add(lblTitle, BorderLayout.NORTH);
 
-        // --- BAGIAN TENGAH: TOMBOL-TOMBOL ---
+        // Bagian tengah
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(4, 1, 0, 15)); // 3 Baris, 1 Kolom, jarak vertikal 25px
+        buttonPanel.setLayout(new GridLayout(4, 1, 0, 15));
 
         JButton btnPersiapan = new JButton();
         JButton btnBukaRestoran = new JButton();
         JButton btnTutorial = new JButton();
         JButton btnSaveExit = new JButton();
-
-        // Mengatur ukuran tombol agar seragam dan cukup besar
         Dimension btnSize = new Dimension(300, 60);
         btnPersiapan.setPreferredSize(btnSize);
         btnBukaRestoran.setPreferredSize(btnSize);
@@ -102,7 +99,6 @@ public class MainMenuGUI extends JFrame {
         btnSaveExit.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Simpan dan keluar dari permainan?", "Pengesahan", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
-                // Memanggil kaedah simpan dari fail GameGenerateGUI
                 GameGenerateGUI.simpanGame(restoran);
 
                 JOptionPane.showMessageDialog(this, "Permainan Berjaya Disimpan!");
@@ -115,11 +111,10 @@ public class MainMenuGUI extends JFrame {
             this.dispose();
         });
         btnTutorial.addActionListener(e -> {
-            // Membuka frame tutorial berbasis langkah yang baru saja kita buat
             new TutorialGUI(restoran).setVisible(true);
         });
 
-        //Icon
+        // Icon
         ImageIcon iconPersiapan = new ImageIcon(getClass().getResource("/asset/opening/persiapan.png"));
         ImageIcon iconBuka = new ImageIcon(getClass().getResource("/asset/opening/open.png"));
         ImageIcon iconTutorial = new ImageIcon(getClass().getResource("/asset/opening/tutorial.png"));
@@ -161,10 +156,4 @@ public class MainMenuGUI extends JFrame {
         btnTutorial.setIcon(iconTutorial);
         btnSaveExit.setIcon(iconSave);
     }
-
-
-
-
-    // Main Method untuk testing halaman ini
-   
 }

@@ -11,7 +11,7 @@ public class GudangGUI extends JFrame {
     public GudangGUI(Restoran restoran) {
         this.restoran = restoran;
 
-        // ── Background Panel ───────────────────────────────────────────────────
+        // Background
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
         JPanel bgPanel = new JPanel() {
@@ -31,7 +31,7 @@ public class GudangGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 15));
 
-        // ── 1. PANEL ATAS (Status Bar) ─────────────────────────────────────────
+        // Panel atas
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         topPanel.setOpaque(false);
@@ -58,12 +58,12 @@ public class GudangGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // ── 2. PANEL TENGAH — GridLayout agar scale saat MAXIMIZED_BOTH ────────
+        // Panel tengah
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         centerPanel.setOpaque(false);
 
-        // ── Kiri: Panel ilustrasi gudang — skala via paintComponent ─────────────
+        // Panel ilustrasi
         Image imgIlustrasiRaw = new ImageIcon(
                 getClass().getResource("/asset/gudang.png")).getImage();
 
@@ -76,7 +76,7 @@ public class GudangGUI extends JFrame {
         };
         ilustrasiPanel.setOpaque(false);
 
-        // ── Kanan: Panel terminal — frame terminal.png skala via paintComponent ──
+        // Panel terminal
         Image imgTerminalRaw = new ImageIcon(
                 getClass().getResource("/asset/terminal.png")).getImage();
 
@@ -88,10 +88,8 @@ public class GudangGUI extends JFrame {
             }
         };
         terminalPanel.setOpaque(false);
-        // Padding dalam agar teks tidak menempel bingkai gambar terminal
         terminalPanel.setBorder(BorderFactory.createEmptyBorder(55, 45, 60, 45));
 
-        // TEXT AREA
         terminalArea = new JTextArea();
         terminalArea.setEditable(false);
         terminalArea.setOpaque(false);
@@ -109,7 +107,7 @@ public class GudangGUI extends JFrame {
         centerPanel.add(terminalPanel);
         add(centerPanel, BorderLayout.CENTER);
 
-        // --- 3. PANEL BAWAH (Tombol Kembali) ---
+        // Panel bawah
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         bottomPanel.setPreferredSize(new Dimension(0, 60));
         bottomPanel.setOpaque(false);
@@ -129,7 +127,6 @@ public class GudangGUI extends JFrame {
         bottomPanel.add(btnKembali);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- 4. TAMPILKAN DATA ASLI ---
         updateStatusBar();
         tampilkanStok();
     }
@@ -140,13 +137,10 @@ public class GudangGUI extends JFrame {
         lblKapasitas.setText("KAPASITAS : " + restoran.getKapasitas());
     }
 
-    // ========================================================
-    // LOGIKA MEMBACA DATA STOK ASLI DARI OBJEK RESTORAN
-    // ========================================================
+    // Logika stok
     private void tampilkanStok() {
         terminalArea.setText("=== TERMINAL : STOK GUDANG SAAT INI ===\n\n");
 
-        // Membaca map stok dari class Restoran
         if (restoran.stok == null || restoran.stok.isEmpty()) {
             terminalArea.append("Gudang kosong! Anda belum membeli bahan baku apapun di Pasar.\n");
         } else {

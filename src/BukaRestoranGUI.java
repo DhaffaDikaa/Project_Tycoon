@@ -14,21 +14,20 @@ public class BukaRestoranGUI extends JFrame {
 
     private Restoran restoran;
     private JLabel lblLevel, lblUang, lblKapasitas;
-    private JTextPane terminalPane;                       // Diganti JTextArea → JTextPane
+    private JTextPane terminalPane;
     private PrintStream originalSystemOut;
 
-    // Warna-warna terminal
     private Color currentColor = Color.GREEN;
     private final Color COLOR_BLUE   = new Color(100, 180, 255);
     private final Color COLOR_RED    = new Color(255,  80,  80);
     private final Color COLOR_GREEN  = new Color( 80, 220,  80);
     private final Color COLOR_ORANGE = new Color(255, 180,  50);
-    private final Color COLOR_BLACK  = new Color(200, 200, 200); // abu terang agar terbaca di bg gelap
+    private final Color COLOR_BLACK  = new Color(200, 200, 200);
 
     public BukaRestoranGUI(Restoran restoran) {
         this.restoran = restoran;
 
-        // ── Background Panel ───────────────────────────────────────────────────
+        // Background
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
         JPanel bgPanel = new JPanel() {
@@ -48,7 +47,7 @@ public class BukaRestoranGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // ── 1. PANEL ATAS (Status Bar) ─────────────────────────────────────────
+        // Panel atas
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         topPanel.setOpaque(false);
@@ -75,12 +74,12 @@ public class BukaRestoranGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // ── 2. PANEL TENGAH ────────────────────────────────────────────────────
+        // Panel tengah
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         centerPanel.setOpaque(false);
 
-        // ── Kiri: Panel ilustrasi ──────────────────────────────────────────────
+        // Panel ilustrasi
         Image imgIlustrasiRaw = new ImageIcon(
                 getClass().getResource("/asset/dapur1.png")).getImage();
 
@@ -93,7 +92,7 @@ public class BukaRestoranGUI extends JFrame {
         };
         ilustrasiPanel.setOpaque(false);
 
-        // ── Kanan: Panel terminal ──────────────────────────────────────────────
+        // Panel terminal
         Image imgTerminalRaw = new ImageIcon(
                 getClass().getResource("/asset/terminal.png")).getImage();
 
@@ -107,7 +106,6 @@ public class BukaRestoranGUI extends JFrame {
         terminalPanel.setOpaque(false);
         terminalPanel.setBorder(BorderFactory.createEmptyBorder(55, 45, 60, 45));
 
-        // JTextPane agar mendukung warna per-baris
         terminalPane = new JTextPane();
         terminalPane.setEditable(false);
         terminalPane.setOpaque(false);
@@ -123,7 +121,7 @@ public class BukaRestoranGUI extends JFrame {
         centerPanel.add(terminalPanel);
         add(centerPanel, BorderLayout.CENTER);
 
-        // ── 3. PANEL BAWAH (Tombol Kembali) ───────────────────────────────────
+        // Panel bawah
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
         buttonPanel.setPreferredSize(new Dimension(0, 70));
         buttonPanel.setOpaque(false);
@@ -164,13 +162,11 @@ public class BukaRestoranGUI extends JFrame {
         mulaiSimulasiThread(btnKembali);
     }
 
-    // ── Ganti warna aktif, flush dulu agar teks sebelumnya sudah terkirim ─────
     private void changeColor(Color c) {
         System.out.flush();
         currentColor = c;
     }
 
-    // ── Tulis teks berwarna ke JTextPane secara thread-safe ───────────────────
     private void appendToTerminal(String text, Color c) {
         SwingUtilities.invokeLater(() -> {
             StyleContext sc = StyleContext.getDefaultStyleContext();
@@ -182,7 +178,7 @@ public class BukaRestoranGUI extends JFrame {
             try {
                 int len = terminalPane.getDocument().getLength();
                 terminalPane.getDocument().insertString(len, text, aset);
-            } catch (Exception e) { /* abaikan */ }
+            } catch (Exception e) { }
             terminalPane.setCaretPosition(terminalPane.getDocument().getLength());
         });
     }
@@ -202,7 +198,6 @@ public class BukaRestoranGUI extends JFrame {
 
         originalSystemOut = System.out;
 
-        // ── Custom OutputStream: deteksi warna otomatis per baris ─────────────
         OutputStream out = new OutputStream() {
             private StringBuilder buffer = new StringBuilder();
 
@@ -267,7 +262,6 @@ public class BukaRestoranGUI extends JFrame {
                     System.out.println("Waktu tunggu terganggu!");
                 }
 
-                // Event tikus (20% chance)
                 if (ran.nextInt(100) < 20) {
                     if (hasCleaner) {
                         changeColor(COLOR_GREEN);

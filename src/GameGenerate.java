@@ -3,7 +3,7 @@ import java.util.*;
 
 public class GameGenerate {
 
-    // Database Master (Ditentukan oleh Developer)
+    // Database master
     private static List<BahanBaku> MASTER_BAHAN = new ArrayList<>();
     private static List<Menu> MASTER_MENU = new ArrayList<>();
 
@@ -12,7 +12,7 @@ public class GameGenerate {
     private static final int HARGA_CLEANER = 75000;
 
     public static void main(String[] args) {
-        initDatabase(); // Memuat semua data menu & bahan
+        initDatabase();
 
         Scanner scanner = new Scanner(System.in);
         Restoran r = new Restoran();
@@ -43,9 +43,8 @@ public class GameGenerate {
         }
     }
 
-    // --- DATABASE DEVELOPER ---
+    // Database developer
     private static void initDatabase() {
-        // BAHAN BAKU (Nama, Harga, Level Minimal)
         BahanBaku beras = new BahanBaku("Beras", 5000, 1);
         BahanBaku telur = new BahanBaku("Telur", 3000, 1);
         BahanBaku teh = new BahanBaku("Teh", 2000, 1);
@@ -68,45 +67,44 @@ public class GameGenerate {
         MASTER_BAHAN.add(udang);
         MASTER_BAHAN.add(cumi);
 
-        // MENU (Nama, Harga Jual, Level Minimal, [Tambahan parameter sesuai kodemu])
         Makanan nasiPutih = new Makanan("Nasi Putih", 8000, 1, 0);
-        nasiPutih.tambahKomposisi(beras, 1); // Butuh Beras
+        nasiPutih.tambahKomposisi(beras, 1);
         MASTER_MENU.add(nasiPutih);
 
         Makanan telurDadar = new Makanan("Telur Dadar", 10000, 1, 0);
-        telurDadar.tambahKomposisi(telur, 2); // Butuh Telur
+        telurDadar.tambahKomposisi(telur, 2);
         MASTER_MENU.add(telurDadar);
 
         Minuman esTeh = new Minuman("Es Teh", 5000, 1, BahanDasar.Fruit, Suhu.Dingin);
-        esTeh.tambahKomposisi(teh, 1); // Butuh Teh
+        esTeh.tambahKomposisi(teh, 1);
         MASTER_MENU.add(esTeh);
 
         Makanan ayamGoreng = new Makanan("Ayam Goreng", 25000, 5, 2);
-        ayamGoreng.tambahKomposisi(ayam, 1); // Butuh Ayam
-        ayamGoreng.tambahKomposisi(minyak, 1); // Butuh Minyak
+        ayamGoreng.tambahKomposisi(ayam, 1);
+        ayamGoreng.tambahKomposisi(minyak, 1);
         MASTER_MENU.add(ayamGoreng);
 
         Makanan nasiGorengAyam = new Makanan("Nasi Goreng Ayam", 30000, 5, 3);
-        nasiGorengAyam.tambahKomposisi(beras, 1); // Beras
-        nasiGorengAyam.tambahKomposisi(ayam, 1); // Ayam
+        nasiGorengAyam.tambahKomposisi(beras, 1);
+        nasiGorengAyam.tambahKomposisi(ayam, 1);
         MASTER_MENU.add(nasiGorengAyam);
 
         Makanan steakSapi = new Makanan("Steak Sapi", 85000, 10, 2);
-        steakSapi.tambahKomposisi(dagingSapi, 1); // Daging
+        steakSapi.tambahKomposisi(dagingSapi, 1);
         MASTER_MENU.add(steakSapi);
 
         Minuman cappuccino = new Minuman("Cappuccino", 20000, 2, BahanDasar.Coffee, Suhu.Panas);
-        cappuccino.tambahKomposisi(bijiKopi, 1); // Kopi
-        cappuccino.tambahKomposisi(susu, 1); // Susu
+        cappuccino.tambahKomposisi(bijiKopi, 1);
+        cappuccino.tambahKomposisi(susu, 1);
         MASTER_MENU.add(cappuccino);
 
         Makanan udangSausPadang = new Makanan("Udang Saus Padang", 65000, 15, 3);
-        udangSausPadang.tambahKomposisi(udang, 1); // Udang
+        udangSausPadang.tambahKomposisi(udang, 1);
         MASTER_MENU.add(udangSausPadang);
 
         Makanan cumiGorengTepung = new Makanan("Cumi Goreng Tepung", 55000, 15, 0);
-        cumiGorengTepung.tambahKomposisi(cumi, 1); // Cumi
-        cumiGorengTepung.tambahKomposisi(minyak, 1); // Minyak
+        cumiGorengTepung.tambahKomposisi(cumi, 1);
+        cumiGorengTepung.tambahKomposisi(minyak, 1);
         MASTER_MENU.add(cumiGorengTepung);
     }
 
@@ -116,7 +114,6 @@ public class GameGenerate {
 
         while (!back) {
 
-            // STATUS FASE PERSIAPAN
             System.out.println(
                     "\n--- FASE PERSIAPAN (Lv."
                             + r.getLevel()
@@ -159,7 +156,7 @@ public class GameGenerate {
         }
     }
 
-    // --- MEKANISME PASAR BERDASARKAN LEVEL ---
+    // Mekanisme pasar
     private static void beliBahan(Scanner sc, Restoran r) {
         System.out.println("\n--- PASAR BAHAN BAKU ---");
         List<BahanBaku> tersedia = new ArrayList<>();
@@ -191,7 +188,7 @@ public class GameGenerate {
         }
     }
 
-    // --- MEKANISME BUKA RESEP BERDASARKAN LEVEL ---
+    // Mekanisme resep
     private static void setMenuRestoran(Scanner sc, Restoran r) {
         System.out.println("\n--- BUKU RESEP (Unlock by Level) ---");
         List<Menu> resepTersedia = new ArrayList<>();
@@ -240,7 +237,7 @@ public class GameGenerate {
 
         String pil = sc.nextLine();
 
-        // BELI JIMAT
+        // Beli jimat
         if (pil.equals("1")) {
 
             System.out.println("1. Charming, 2. Security, 3. Cleaner");
@@ -278,7 +275,7 @@ public class GameGenerate {
 
         }
 
-        // JUAL JIMAT
+        // Jual jimat
         else if (pil.equals("2")) {
 
             if (r.getInventarisJimat().isEmpty()) {
@@ -307,7 +304,7 @@ public class GameGenerate {
             }
         }
 
-        // PASANG JIMAT
+        // Pasang jimat
         else if (pil.equals("3")) {
 
             if (r.getInventarisJimat().isEmpty()) {
@@ -358,7 +355,7 @@ public class GameGenerate {
             System.out.println("\n[Rombongan " + (i + 1) + "] " + jml + " orang datang..."
             );
 
-            // CEK KAPASITAS
+            // Cek kapasitas
             if (kursiTerisi + jml <= r.getKapasitas()) {
                 kursiTerisi += jml;
                 System.out.println("Tamu duduk. (Kursi terpakai: " + kursiTerisi + "/" + r.getKapasitas() + ")");
@@ -367,7 +364,6 @@ public class GameGenerate {
                 Pelanggan p = new Pelanggan(jml, r);
                 p.pilihMenu(r);
                 p.selesaikanTransaksi(r);
-                //kursiTerisi -= jml;
                 System.out.println("Tamu selesai dan pergi. Kursi kosong kembali.");
 
             } else {

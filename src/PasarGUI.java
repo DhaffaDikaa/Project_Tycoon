@@ -8,7 +8,7 @@ public class PasarGUI extends JFrame {
     private Restoran restoran;
     private JLabel lblLevel, lblUang, lblKapasitas;
     private JTextArea terminalArea;
-    private List<BahanBaku> bahanTersediaSaatIni; // Menyimpan daftar bahan yang sudah unlock
+    private List<BahanBaku> bahanTersediaSaatIni;
 
     public PasarGUI(Restoran restoran) {
         this.restoran = restoran;
@@ -34,7 +34,7 @@ public class PasarGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // ── 1. PANEL ATAS (Status Bar) ─────────────────────────────────────────
+        // Panel atas
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         topPanel.setOpaque(false);
@@ -61,12 +61,12 @@ public class PasarGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // ── 2. PANEL TENGAH — GridLayout agar scale saat MAXIMIZED_BOTH ────────
+        // Panel tengah
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         centerPanel.setOpaque(false);
 
-        // ── Kiri: Panel ilustrasi toko sembako — skala via paintComponent ───────
+        // Panel ilustrasi
         Image imgIlustrasiRaw = new ImageIcon(
                 getClass().getResource("/asset/tokosembako.png")).getImage();
 
@@ -79,7 +79,7 @@ public class PasarGUI extends JFrame {
         };
         ilustrasiPanel.setOpaque(false);
 
-        // ── Kanan: Panel terminal — frame terminal.png skala via paintComponent ──
+        // Panel terminal
         Image imgTerminalRaw = new ImageIcon(
                 getClass().getResource("/asset/terminal.png")).getImage();
 
@@ -93,7 +93,6 @@ public class PasarGUI extends JFrame {
         terminalPanel.setOpaque(false);
         terminalPanel.setBorder(BorderFactory.createEmptyBorder(55, 45, 60, 45));
 
-        // TEXT AREA
         terminalArea = new JTextArea();
         terminalArea.setEditable(false);
         terminalArea.setOpaque(false);
@@ -111,12 +110,12 @@ public class PasarGUI extends JFrame {
         centerPanel.add(terminalPanel);
         add(centerPanel, BorderLayout.CENTER);
 
-        // --- 3. PANEL BAWAH (2 Input Box & Tombol) ---
+        // Panel bawah
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
         bottomPanel.setPreferredSize(new Dimension(0, 80));
         bottomPanel.setOpaque(false);
 
-        // Field Nomor Bahan
+        // Input nomor bahan
         ImageIcon iconField1 = new ImageIcon(getClass().getResource("/asset/dapur/kosong.png"));
         Image imgField1 = iconField1.getImage();
         Image resizeField1 = imgField1.getScaledInstance(165, 45, Image.SCALE_SMOOTH);
@@ -133,7 +132,7 @@ public class PasarGUI extends JFrame {
         NomorBahan.setHorizontalAlignment(JTextField.CENTER);
         labelNomor.add(NomorBahan);
 
-        // Field Jumlah Bahan
+        // Input jumlah bahan
         ImageIcon iconField2 = new ImageIcon(getClass().getResource("/asset/dapur/kosong.png"));
         Image imgField2 = iconField2.getImage();
         Image resizeField2 = imgField2.getScaledInstance(165, 45, Image.SCALE_SMOOTH);
@@ -150,7 +149,7 @@ public class PasarGUI extends JFrame {
         JumlahBahan.setHorizontalAlignment(JTextField.CENTER);
         labelJumlah.add(JumlahBahan);
 
-        // Tombol Beli
+        // Tombol beli
         ImageIcon iconBeli = new ImageIcon(getClass().getResource("/asset/beli.png"));
         Image img3 = iconBeli.getImage();
         Image resize3 = img3.getScaledInstance(135, 40, Image.SCALE_SMOOTH);
@@ -161,7 +160,7 @@ public class PasarGUI extends JFrame {
         btnBeli.setFocusPainted(false);
         btnBeli.setOpaque(false);
 
-        // Tombol Kembali
+        // Tombol kembali
         ImageIcon iconBack = new ImageIcon(getClass().getResource("/asset/back.png"));
         Image img5 = iconBack.getImage();
         Image resize5 = img5.getScaledInstance(150, 40, Image.SCALE_SMOOTH);
@@ -172,28 +171,23 @@ public class PasarGUI extends JFrame {
         btnKembali.setContentAreaFilled(false);
         btnKembali.setFocusPainted(false);
 
-        // ========================================================
-        // LOGIKA ASLI DARI beliBahan() SEKARANG PINDAH KE SINI
-        // ========================================================
+        // Logika beli bahan
         btnBeli.addActionListener(e -> {
             try {
                 int inputNomor = Integer.parseInt(NomorBahan.getText());
                 int jumlahBeli = Integer.parseInt(JumlahBahan.getText());
 
-                // Validasi Nomor Pilihan
                 if (inputNomor > 0 && inputNomor <= bahanTersediaSaatIni.size()) {
                     BahanBaku bahanDipilih = bahanTersediaSaatIni.get(inputNomor - 1);
                     int totalHarga = jumlahBeli * bahanDipilih.getHarga();
 
-                    // Cek Uang
                     if (restoran.getUang() >= totalHarga) {
-                        restoran.kurangiUang(totalHarga); // Potong uang
+                        restoran.kurangiUang(totalHarga);
 
-                        // Tambah ke stok Gudang
                         restoran.stok.put(bahanDipilih, restoran.stok.getOrDefault(bahanDipilih, 0) + jumlahBeli);
 
                         terminalArea.append("✅ Berhasil membeli " + jumlahBeli + " " + bahanDipilih.getNama() + " (Total: Rp " + totalHarga + ")\n");
-                        updateStatusBar(); // Perbarui tampilan Uang di atas
+                        updateStatusBar();
                     } else {
                         terminalArea.append("❌ Uang tidak cukup! Butuh Rp " + totalHarga + "\n");
                     }
@@ -217,7 +211,6 @@ public class PasarGUI extends JFrame {
         bottomPanel.add(btnKembali);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- 4. TAMPILKAN DATA AWAL ---
         updateStatusBar();
         tampilkanDaftarBahanBaku();
     }
@@ -228,16 +221,12 @@ public class PasarGUI extends JFrame {
         lblKapasitas.setText("KAPASITAS : " + restoran.getKapasitas());
     }
 
-    // ========================================================
-    // LOGIKA MENAMPILKAN DATABASE BAHAN SESUAI LEVEL
-    // ========================================================
+    // Logika database bahan
     private void tampilkanDaftarBahanBaku() {
         terminalArea.setText("=== PASAR BAHAN BAKU ===\n");
         terminalArea.append("Uang Anda: Rp " + restoran.getUang() + "\n\n");
 
-        bahanTersediaSaatIni.clear(); // Kosongkan list bantuan
-
-        // Mengambil data dari GameGenerateGUI (Database Utama)
+        bahanTersediaSaatIni.clear();
         for (BahanBaku b : GameGenerateGUI.MASTER_BAHAN) {
             if (restoran.getLevel() >= b.getLevelMinimal()) {
                 bahanTersediaSaatIni.add(b);

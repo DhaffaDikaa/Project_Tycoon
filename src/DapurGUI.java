@@ -8,14 +8,14 @@ public class DapurGUI extends JFrame {
     private Restoran restoran;
     private JLabel lblLevel, lblUang, lblKapasitas;
     private JTextArea terminalArea;
-    private List<Menu> menuTersediaSaatIni; // Menyimpan daftar resep yang sudah terbuka
+    private List<Menu> menuTersediaSaatIni;
 
     public DapurGUI(Restoran restoran) {
         this.restoran = restoran;
         this.menuTersediaSaatIni = new ArrayList<>();
         setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        // ── Background Panel ───────────────────────────────────────────────────
+        // Background
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
         JPanel bgPanel = new JPanel() {
@@ -34,7 +34,7 @@ public class DapurGUI extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // ── 1. PANEL ATAS (Status Bar) ─────────────────────────────────────────
+        // Panel atas
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         topPanel.setOpaque(false);
@@ -61,12 +61,12 @@ public class DapurGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // ── 2. PANEL TENGAH — GridLayout agar scale saat MAXIMIZED_BOTH ────────
+        // Panel tengah
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         centerPanel.setOpaque(false);
 
-        // ── Kiri: Panel ilustrasi dapur — gambar skala via paintComponent ───────
+        // Panel ilustrasi
         Image imgIlustrasiRaw = new ImageIcon(
                 getClass().getResource("/asset/dapur.png")).getImage();
 
@@ -79,7 +79,7 @@ public class DapurGUI extends JFrame {
         };
         ilustrasiPanel.setOpaque(false);
 
-        // ── Kanan: Panel terminal — frame terminal.png skala via paintComponent ──
+        // Panel terminal
         Image imgTerminalRaw = new ImageIcon(
                 getClass().getResource("/asset/terminal.png")).getImage();
 
@@ -91,10 +91,8 @@ public class DapurGUI extends JFrame {
             }
         };
         terminalPanel.setOpaque(false);
-        // Padding dalam agar teks tidak menempel bingkai gambar terminal
         terminalPanel.setBorder(BorderFactory.createEmptyBorder(55, 45, 60, 45));
 
-        // TEXT AREA
         terminalArea = new JTextArea();
         terminalArea.setEditable(false);
         terminalArea.setOpaque(false);
@@ -112,12 +110,12 @@ public class DapurGUI extends JFrame {
         centerPanel.add(terminalPanel);
         add(centerPanel, BorderLayout.CENTER);
 
-        // --- 3. PANEL BAWAH (Input Box & Tombol) ---
+        // Panel bawah
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
         bottomPanel.setPreferredSize(new Dimension(0, 80));
         bottomPanel.setOpaque(false);
 
-        // Textfield berikon
+        // Input menu
         ImageIcon iconField = new ImageIcon(getClass().getResource("/asset/dapur/kosong.png"));
         Image img4 = iconField.getImage();
         Image resize4 = img4.getScaledInstance(165, 45, Image.SCALE_SMOOTH);
@@ -134,7 +132,7 @@ public class DapurGUI extends JFrame {
         txtFieldBox.setHorizontalAlignment(JTextField.CENTER);
         labelField.add(txtFieldBox);
 
-        // IconPilih
+        // Tombol pilih
         ImageIcon iconPilih = new ImageIcon(getClass().getResource("/asset/dapur/pilihMenu.png"));
         Image img3 = iconPilih.getImage();
         Image resize3 = img3.getScaledInstance(165, 40, Image.SCALE_SMOOTH);
@@ -145,7 +143,7 @@ public class DapurGUI extends JFrame {
         btnPilihMenu.setContentAreaFilled(false);
         btnPilihMenu.setFocusPainted(false);
 
-        // IconBack
+        // Tombol kembali
         ImageIcon iconBack = new ImageIcon(getClass().getResource("/asset/back.png"));
         Image img5 = iconBack.getImage();
         Image resize5 = img5.getScaledInstance(150, 40, Image.SCALE_SMOOTH);
@@ -156,9 +154,7 @@ public class DapurGUI extends JFrame {
         btnKembali.setContentAreaFilled(false);
         btnKembali.setFocusPainted(false);
 
-        // ========================================================
-        // LOGIKA ASLI setMenuRestoran() PINDAH KE SINI
-        // ========================================================
+        // Logika set menu
         btnPilihMenu.addActionListener(e -> {
             try {
                 int inputNomor = Integer.parseInt(txtFieldBox.getText());
@@ -167,13 +163,13 @@ public class DapurGUI extends JFrame {
                     Menu m = menuTersediaSaatIni.get(inputNomor - 1);
 
                     if (restoran.getMenu().containsKey(m)) {
-                        restoran.getMenu().remove(m); // Non-aktifkan
+                        restoran.getMenu().remove(m);
                         JOptionPane.showMessageDialog(this, "➖ " + m.getNama() + " dihapus dari daftar menu hari ini.");
                     } else {
-                        restoran.getMenu().put(m, true); // Aktifkan
+                        restoran.getMenu().put(m, true);
                         JOptionPane.showMessageDialog(this, "➕ " + m.getNama() + " sekarang tersedia untuk pelanggan.");
                     }
-                    tampilkanDaftarMenu(); // Refresh daftar setelah status berubah
+                    tampilkanDaftarMenu();
                 } else {
                     JOptionPane.showMessageDialog(this, "❌ Nomor menu tidak tersedia di daftar!");
                 }
@@ -190,7 +186,6 @@ public class DapurGUI extends JFrame {
         bottomPanel.add(btnKembali);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // --- 4. TAMPILKAN DATA AWAL ---
         updateStatusBar();
         tampilkanDaftarMenu();
 
