@@ -39,14 +39,13 @@ public class MainMenuGUI extends JFrame {
         bgPanel.add(lblTitle, BorderLayout.NORTH);
 
         // --- BAGIAN TENGAH: TOMBOL-TOMBOL ---
-        // Membuat panel khusus untuk menampung tombol agar bisa diatur jaraknya
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new GridLayout(4, 1, 0, 15)); // 3 Baris, 1 Kolom, jarak vertikal 25px
 
-        JButton btnPersiapan = new JButton("PERSIAPAN");
-        JButton btnBukaRestoran = new JButton("BUKA RESTORAN");
-        JButton btnTutorial = new JButton("TUTORIAL BERMAIN");
-        JButton btnSaveExit = new JButton("SAVE & EXIT");
+        JButton btnPersiapan = new JButton();
+        JButton btnBukaRestoran = new JButton();
+        JButton btnTutorial = new JButton();
+        JButton btnSaveExit = new JButton();
 
         // Mengatur ukuran tombol agar seragam dan cukup besar
         Dimension btnSize = new Dimension(300, 60);
@@ -55,14 +54,11 @@ public class MainMenuGUI extends JFrame {
         btnSaveExit.setPreferredSize(btnSize);
         btnTutorial.setPreferredSize(btnSize);
 
-        // Memasukkan tombol ke dalam buttonPanel
         buttonPanel.add(btnPersiapan);
         buttonPanel.add(btnBukaRestoran);
         buttonPanel.add(btnSaveExit);
         buttonPanel.add(btnTutorial);
 
-        // Membuat panel pembungkus (wrapper) menggunakan GridBagLayout 
-        // Ini adalah trik rahasia agar buttonPanel posisinya persis di TENGAH layar
         JPanel centerWrapper = new JPanel(new GridBagLayout());
         centerWrapper.add(buttonPanel);
         bgPanel.add(centerWrapper, BorderLayout.CENTER);
@@ -72,15 +68,36 @@ public class MainMenuGUI extends JFrame {
         buttonPanel.setOpaque(false);
         centerWrapper.setOpaque(false);
 
-        // --- ACTION LISTENER (Fungsi Tombol) ---
-
-
         btnBukaRestoran.addActionListener(e -> {
-            // Membuka halaman simulasi restoran
-            new BukaRestoranGUI(restoran).setVisible(true);
+            try {
 
-            // Menutup main menu
-            this.dispose();
+                if (restoran.getMenu() == null || restoran.getMenu().isEmpty()) {
+                    throw new MenuKosongException("Gagal Buka Restoran! Anda belum mendaftarkan menu apapun di resep.");
+                }
+
+                boolean adaStok = false;
+                if (restoran.stok != null) {
+                    for (int jumlahStok : restoran.stok.values()) {
+                        if (jumlahStok > 0) {
+                            adaStok = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!adaStok) {
+                    throw new BahanBakuKosongException("Gagal Buka Restoran! Gudang Anda kosong total. Silakan belanja bahan baku terlebih dahulu!");
+                }
+
+                new BukaRestoranGUI(restoran).setVisible(true);
+                dispose();
+
+            } catch (MenuKosongException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Peringatan Menu", JOptionPane.WARNING_MESSAGE);
+            } catch (BahanBakuKosongException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Peringatan Logistik Gudang", JOptionPane.ERROR_MESSAGE);
+            }
+
         });
         btnSaveExit.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Simpan dan keluar dari permainan?", "Pengesahan", JOptionPane.YES_NO_OPTION);
@@ -94,10 +111,7 @@ public class MainMenuGUI extends JFrame {
         });
 
         btnPersiapan.addActionListener(e -> {
-            // Membuka halaman persiapan dan membawa data restoran
             new MenuPersiapanGUI(restoran).setVisible(true);
-
-            // Menutup halaman main menu saat ini
             this.dispose();
         });
         btnTutorial.addActionListener(e -> {
@@ -118,11 +132,12 @@ public class MainMenuGUI extends JFrame {
                 btnSaveExit
         };
 
-        for (JButton btn : semuaTombol) {
-            btn.setBorderPainted(false);
-            //btn.setContentAreaFilled(false);
-            //btn.setFocusPainted(false);
-            //btn.setOpaque(false);
+        for(JButton b : semuaTombol) {
+            b.setBorderPainted(false);
+            b.setContentAreaFilled(false);
+            b.setFocusPainted(false);
+            b.setOpaque(false);
+            b.setCursor(new Cursor(Cursor.HAND_CURSOR));
         }
 
         Image img = iconPersiapan.getImage();

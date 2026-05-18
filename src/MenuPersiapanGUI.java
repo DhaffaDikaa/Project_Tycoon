@@ -43,10 +43,9 @@ public class MenuPersiapanGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // --- 2. PANEL TENGAH (Peta Kota & Tombol) ---
-        // Menggunakan Absolute Layout (null) agar tombol bisa ditaruh bebas
+        //PANEL TENGAH (Peta Kota & Tombol)
         //Bg
-        ImageIcon bg = new ImageIcon(getClass().getResource("/asset/Bg3.png"));
+        ImageIcon bg = new ImageIcon(getClass().getResource("/asset/bg3.png"));
         Image background = bg.getImage();
 
         JPanel centerPanel = new JPanel() {
@@ -59,26 +58,28 @@ public class MenuPersiapanGUI extends JFrame {
         };
         centerPanel.setLayout(null);
 
+        ImageIcon tranparan = new ImageIcon(getClass().getResource("/asset/tranparan.png"));
 
         // Membuat tombol-tombol
-        JButton btnPasar = new JButton();
-        JButton btnDapur = new JButton();
-        JButton btnGudang = new JButton();
-        JButton btnJimat = new JButton();
-        JButton btnKembali = new JButton();
+        JButton btnPasar = new JButton(tranparan);
+        JButton btnDapur = new JButton(tranparan);
+        JButton btnGudang = new JButton(tranparan);
+        JButton btnJimat = new JButton(tranparan);
+        JButton btnKembali = new JButton(tranparan);
 
         // Mengatur posisi (X, Y) dan ukuran (Lebar, Tinggi) dari masing-masing tombol
-        // Angka-angka ini disesuaikan kasar dengan letak bangunan di gambarmu
-        btnPasar.setBounds(140, 160, 200, 150);    // Kiri Bawah (Grocery)
-        btnDapur.setBounds(460, 160, 200, 150);   // Tengah (Restaurant)
-        btnGudang.setBounds(1160, 180, 180, 170);  // Kanan Atas (Jendela/Gudang)
-        btnJimat.setBounds(140, 450, 180, 170);   // Kanan Bawah (Toko Jimat)
-        btnKembali.setBounds(640, 680, 200, 60);// Pojok kiri atas untuk tombol kembali
+        btnPasar.setBounds(140, 160, 200, 150);
+        btnDapur.setBounds(460, 160, 200, 150);
+        btnGudang.setBounds(1160, 180, 180, 170);
+        btnJimat.setBounds(140, 450, 180, 170);
+        btnKembali.setBounds(640, 680, 200, 60);
 
         //transparan
         JButton[] btn = {btnPasar, btnDapur,btnGudang,btnJimat,btnKembali};
         for(JButton b : btn) {
             b.setBorderPainted(false);
+            b.setContentAreaFilled(false);
+            b.setFocusPainted(false);
             b.setOpaque(false);
         }
 
@@ -146,7 +147,8 @@ public class MenuPersiapanGUI extends JFrame {
         lblKapasitas.setText("KAPASITAS : " + restoran.getKapasitas());
     }
 
-    // Main method untuk testing mandiri
-    
-    
+
 }
+
+
+

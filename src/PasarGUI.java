@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,11 +13,11 @@ public class PasarGUI extends JFrame {
     public PasarGUI(Restoran restoran) {
         this.restoran = restoran;
         this.bahanTersediaSaatIni = new ArrayList<>();
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        //Background
+        // Background
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
-
         JPanel bgPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -26,11 +25,9 @@ public class PasarGUI extends JFrame {
                 g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
             }
         };
-
         bgPanel.setLayout(new BorderLayout());
         setContentPane(bgPanel);
 
-        // Pengaturan dasar Frame
         setTitle("Game Presto - Pasar (Beli Bahan Baku)");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -42,7 +39,7 @@ public class PasarGUI extends JFrame {
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         topPanel.setOpaque(false);
 
-        JLabel lblTitle = new JLabel("SIMULASI BUKA RESTORAN", SwingConstants.CENTER);
+        JLabel lblTitle = new JLabel("PASAR BAHAN BAKU", SwingConstants.CENTER);
         lblTitle.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         lblTitle.setForeground(Color.WHITE);
 
@@ -64,68 +61,63 @@ public class PasarGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // --- 2. PANEL TENGAH (Ilustrasi & Terminal) ---
-        JPanel centerPanel = new JPanel(null);
+        // ── 2. PANEL TENGAH — GridLayout agar scale saat MAXIMIZED_BOTH ────────
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         centerPanel.setOpaque(false);
 
-        ImageIcon icon = new ImageIcon(getClass().getResource("/asset/tokosembako.png"));
-        Image img = icon.getImage();
-        Image resize = img.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(resize);
+        // ── Kiri: Panel ilustrasi toko sembako — skala via paintComponent ───────
+        Image imgIlustrasiRaw = new ImageIcon(
+                getClass().getResource("/asset/tokosembako.png")).getImage();
 
-        JLabel lblIlustrasi = new JLabel(icon);
-        lblIlustrasi.setBounds(10, 15, 475, 425);
-        lblIlustrasi.setForeground(Color.WHITE);
+        JPanel ilustrasiPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgIlustrasiRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        ilustrasiPanel.setOpaque(false);
 
-        // TERMINAL IMAGE
-        ImageIcon iconTerminal = new ImageIcon(getClass().getResource("/asset/terminal.png"));
+        // ── Kanan: Panel terminal — frame terminal.png skala via paintComponent ──
+        Image imgTerminalRaw = new ImageIcon(
+                getClass().getResource("/asset/terminal.png")).getImage();
 
-        Image img2 = iconTerminal.getImage();
-        Image resize2 = img2.getScaledInstance(445, 425, Image.SCALE_SMOOTH);
-
-        iconTerminal = new ImageIcon(resize2);
-
-        JLabel terminalBg = new JLabel(iconTerminal);
-        terminalBg.setLayout(null);
-
-        terminalBg.setBounds(500, 25, 445, 425);
+        JPanel terminalPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgTerminalRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        terminalPanel.setOpaque(false);
+        terminalPanel.setBorder(BorderFactory.createEmptyBorder(55, 45, 60, 45));
 
         // TEXT AREA
         terminalArea = new JTextArea();
-
         terminalArea.setEditable(false);
         terminalArea.setOpaque(false);
-
         terminalArea.setForeground(Color.GREEN);
-
         terminalArea.setFont(new Font("Monospaced", Font.BOLD, 10));
 
-        // posisi isi terminal
-        terminalArea.setBounds(40, 60, 350, 300);
         JScrollPane scrollTerminal = new JScrollPane(terminalArea);
-        scrollTerminal.setBounds(40, 60, 350, 300);
         scrollTerminal.setOpaque(false);
         scrollTerminal.getViewport().setOpaque(false);
+        scrollTerminal.setBorder(null);
 
-        terminalArea.setOpaque(false);
-        terminalBg.add(scrollTerminal);
+        terminalPanel.add(scrollTerminal, BorderLayout.CENTER);
 
-
-        centerPanel.add(lblIlustrasi);
-        centerPanel.add(terminalBg);
-
+        centerPanel.add(ilustrasiPanel);
+        centerPanel.add(terminalPanel);
         add(centerPanel, BorderLayout.CENTER);
 
         // --- 3. PANEL BAWAH (2 Input Box & Tombol) ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
         bottomPanel.setPreferredSize(new Dimension(0, 80));
+        bottomPanel.setOpaque(false);
 
-        JTextField txtNomorBahan = new JTextField(5);
-        JTextField txtJumlahBahan = new JTextField(5);
-
-
+        // Field Nomor Bahan
         ImageIcon iconField1 = new ImageIcon(getClass().getResource("/asset/dapur/kosong.png"));
-
         Image imgField1 = iconField1.getImage();
         Image resizeField1 = imgField1.getScaledInstance(165, 45, Image.SCALE_SMOOTH);
         iconField1 = new ImageIcon(resizeField1);
@@ -134,72 +126,51 @@ public class PasarGUI extends JFrame {
 
         JTextField NomorBahan = new JTextField();
         NomorBahan.setBounds(20, 5, 120, 35);
-
         NomorBahan.setForeground(Color.WHITE);
         NomorBahan.setOpaque(false);
         NomorBahan.setBorder(null);
         NomorBahan.setCaretColor(Color.WHITE);
-
         NomorBahan.setHorizontalAlignment(JTextField.CENTER);
-
         labelNomor.add(NomorBahan);
 
-// ======================================
-// FIELD JUMLAH BAHAN
-// ======================================
-
+        // Field Jumlah Bahan
         ImageIcon iconField2 = new ImageIcon(getClass().getResource("/asset/dapur/kosong.png"));
-
         Image imgField2 = iconField2.getImage();
         Image resizeField2 = imgField2.getScaledInstance(165, 45, Image.SCALE_SMOOTH);
-
         iconField2 = new ImageIcon(resizeField2);
-
         JLabel labelJumlah = new JLabel(iconField2);
         labelJumlah.setLayout(null);
 
         JTextField JumlahBahan = new JTextField();
-
         JumlahBahan.setBounds(20, 5, 120, 35);
-
         JumlahBahan.setForeground(Color.WHITE);
         JumlahBahan.setOpaque(false);
         JumlahBahan.setBorder(null);
         JumlahBahan.setCaretColor(Color.WHITE);
-
         JumlahBahan.setHorizontalAlignment(JTextField.CENTER);
-
         labelJumlah.add(JumlahBahan);
 
-        //beli
+        // Tombol Beli
         ImageIcon iconBeli = new ImageIcon(getClass().getResource("/asset/beli.png"));
-
         Image img3 = iconBeli.getImage();
         Image resize3 = img3.getScaledInstance(135, 40, Image.SCALE_SMOOTH);
-
         iconBeli = new ImageIcon(resize3);
-
         JButton btnBeli = new JButton(iconBeli);
-
         btnBeli.setBorderPainted(false);
         btnBeli.setContentAreaFilled(false);
         btnBeli.setFocusPainted(false);
         btnBeli.setOpaque(false);
 
-        //IconBack
+        // Tombol Kembali
         ImageIcon iconBack = new ImageIcon(getClass().getResource("/asset/back.png"));
         Image img5 = iconBack.getImage();
         Image resize5 = img5.getScaledInstance(150, 40, Image.SCALE_SMOOTH);
         iconBack = new ImageIcon(resize5);
-
         JButton btnKembali = new JButton(iconBack);
-
         btnKembali.setPreferredSize(new Dimension(150, 40));
-
-        topPanel.setOpaque(false);
-        centerPanel.setOpaque(false);
-        bottomPanel.setOpaque(false);
-        terminalArea.setOpaque(false);
+        btnKembali.setBorderPainted(false);
+        btnKembali.setContentAreaFilled(false);
+        btnKembali.setFocusPainted(false);
 
         // ========================================================
         // LOGIKA ASLI DARI beliBahan() SEKARANG PINDAH KE SINI
@@ -238,15 +209,12 @@ public class PasarGUI extends JFrame {
             }
         });
 
-        btnKembali.addActionListener(e -> {
-            this.dispose();
-        });
+        btnKembali.addActionListener(e -> this.dispose());
 
         bottomPanel.add(labelNomor);
         bottomPanel.add(labelJumlah);
         bottomPanel.add(btnBeli);
         bottomPanel.add(btnKembali);
-
         add(bottomPanel, BorderLayout.SOUTH);
 
         // --- 4. TAMPILKAN DATA AWAL ---

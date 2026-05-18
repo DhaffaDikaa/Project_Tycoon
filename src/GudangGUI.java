@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.util.Map;
 import javax.swing.*;
@@ -12,7 +11,7 @@ public class GudangGUI extends JFrame {
     public GudangGUI(Restoran restoran) {
         this.restoran = restoran;
 
-        //IconBg
+        // ── Background Panel ───────────────────────────────────────────────────
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
         JPanel bgPanel = new JPanel() {
@@ -22,12 +21,12 @@ public class GudangGUI extends JFrame {
                 g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
             }
         };
-
         bgPanel.setLayout(new BorderLayout());
         setContentPane(bgPanel);
 
         setTitle("Resto Tycoon - Gudang");
         setSize(900, 600);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 15));
@@ -37,9 +36,7 @@ public class GudangGUI extends JFrame {
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         topPanel.setOpaque(false);
 
-
-
-        JLabel lblTitle = new JLabel("SIMULASI BUKA RESTORAN", SwingConstants.CENTER);
+        JLabel lblTitle = new JLabel("GUDANG", SwingConstants.CENTER);
         lblTitle.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         lblTitle.setForeground(Color.WHITE);
 
@@ -61,63 +58,62 @@ public class GudangGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        // --- 2. PANEL TENGAH (Ilustrasi & Terminal) ---
-        // PANEL TENGAH
-        JPanel centerPanel = new JPanel(null);
+        // ── 2. PANEL TENGAH — GridLayout agar scale saat MAXIMIZED_BOTH ────────
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         centerPanel.setOpaque(false);
 
+        // ── Kiri: Panel ilustrasi gudang — skala via paintComponent ─────────────
+        Image imgIlustrasiRaw = new ImageIcon(
+                getClass().getResource("/asset/gudang.png")).getImage();
 
-        // ILUSTRASI KIRI
-        ImageIcon icon = new ImageIcon(getClass().getResource("/asset/gudang.png"));
-        Image img5 = icon.getImage();
-        Image resize5 = img5.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(resize5);
+        JPanel ilustrasiPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgIlustrasiRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        ilustrasiPanel.setOpaque(false);
 
-        JLabel lblIlustrasi = new JLabel(icon);
-        lblIlustrasi.setBounds(10, 15, 425, 425);
-        lblIlustrasi.setForeground(Color.WHITE);
+        // ── Kanan: Panel terminal — frame terminal.png skala via paintComponent ──
+        Image imgTerminalRaw = new ImageIcon(
+                getClass().getResource("/asset/terminal.png")).getImage();
 
-
-        // TERMINAL IMAGE
-        ImageIcon iconTerminal = new ImageIcon(getClass().getResource("/asset/terminal.png"));
-
-        Image img2 = iconTerminal.getImage();
-        Image resize2 = img2.getScaledInstance(425, 425, Image.SCALE_SMOOTH);
-
-        iconTerminal = new ImageIcon(resize2);
-
-        JLabel terminalBg = new JLabel(iconTerminal);
-        terminalBg.setLayout(null);
-
-        terminalBg.setBounds(440, 25, 425, 425);
+        JPanel terminalPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgTerminalRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        terminalPanel.setOpaque(false);
+        // Padding dalam agar teks tidak menempel bingkai gambar terminal
+        terminalPanel.setBorder(BorderFactory.createEmptyBorder(55, 45, 60, 45));
 
         // TEXT AREA
         terminalArea = new JTextArea();
-
         terminalArea.setEditable(false);
         terminalArea.setOpaque(false);
-
         terminalArea.setForeground(Color.GREEN);
-
         terminalArea.setFont(new Font("Monospaced", Font.BOLD, 14));
 
-        // posisi isi terminal
-        terminalArea.setBounds(40, 60, 330, 180);
+        JScrollPane scrollTerminal = new JScrollPane(terminalArea);
+        scrollTerminal.setOpaque(false);
+        scrollTerminal.getViewport().setOpaque(false);
+        scrollTerminal.setBorder(null);
 
-        terminalBg.add(terminalArea);
+        terminalPanel.add(scrollTerminal, BorderLayout.CENTER);
 
-
-        centerPanel.add(lblIlustrasi);
-        centerPanel.add(terminalBg);
-
+        centerPanel.add(ilustrasiPanel);
+        centerPanel.add(terminalPanel);
         add(centerPanel, BorderLayout.CENTER);
-
 
         // --- 3. PANEL BAWAH (Tombol Kembali) ---
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         bottomPanel.setPreferredSize(new Dimension(0, 60));
+        bottomPanel.setOpaque(false);
 
-        //icon
         ImageIcon iconBack = new ImageIcon(getClass().getResource("/asset/back.png"));
         Image img = iconBack.getImage();
         Image resize = img.getScaledInstance(150, 40, Image.SCALE_SMOOTH);
@@ -125,6 +121,9 @@ public class GudangGUI extends JFrame {
 
         JButton btnKembali = new JButton(iconBack);
         btnKembali.setPreferredSize(new Dimension(150, 40));
+        btnKembali.setBorderPainted(false);
+        btnKembali.setContentAreaFilled(false);
+        btnKembali.setFocusPainted(false);
         btnKembali.addActionListener(e -> this.dispose());
 
         bottomPanel.add(btnKembali);
@@ -133,11 +132,6 @@ public class GudangGUI extends JFrame {
         // --- 4. TAMPILKAN DATA ASLI ---
         updateStatusBar();
         tampilkanStok();
-
-        topPanel.setOpaque(false);
-        centerPanel.setOpaque(false);
-        terminalArea.setOpaque(false);
-        bottomPanel.setOpaque(false);
     }
 
     private void updateStatusBar() {

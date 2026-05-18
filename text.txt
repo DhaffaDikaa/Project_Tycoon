@@ -1,5 +1,3 @@
- ImageIcon iconPersiapan = new ImageIcon(getClass().getResource("/asset/opening/persiapan.png"));
-
- Image img = iconPersiapan.getImage();
- Image resize = img.getScaledInstance(300, 60, Image.SCALE_SMOOTH);
- iconPersiapan = new ImageIcon(resize);
+Terdapat perbedaan render pada mac dan windows sehingga GUI
+dari folder ini akan terlihat berantakan karena perbedaan layar dan
+rendering dari masing-masing OS

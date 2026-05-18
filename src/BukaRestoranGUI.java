@@ -2,20 +2,33 @@ import java.awt.*;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 
 public class BukaRestoranGUI extends JFrame {
 
     private Restoran restoran;
     private JLabel lblLevel, lblUang, lblKapasitas;
-    private JTextArea terminalArea;
-    private PrintStream originalSystemOut; // Untuk menyimpan System.out asli
+    private JTextPane terminalPane;                       // Diganti JTextArea → JTextPane
+    private PrintStream originalSystemOut;
+
+    // Warna-warna terminal
+    private Color currentColor = Color.GREEN;
+    private final Color COLOR_BLUE   = new Color(100, 180, 255);
+    private final Color COLOR_RED    = new Color(255,  80,  80);
+    private final Color COLOR_GREEN  = new Color( 80, 220,  80);
+    private final Color COLOR_ORANGE = new Color(255, 180,  50);
+    private final Color COLOR_BLACK  = new Color(200, 200, 200); // abu terang agar terbaca di bg gelap
 
     public BukaRestoranGUI(Restoran restoran) {
         this.restoran = restoran;
 
-        // Background Panel (sama seperti DapurGUI)
+        // ── Background Panel ───────────────────────────────────────────────────
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
         JPanel bgPanel = new JPanel() {
@@ -30,11 +43,12 @@ public class BukaRestoranGUI extends JFrame {
 
         setTitle("Game Presto - Simulasi Buka Restoran");
         setSize(900, 600);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Cegah tutup saat simulasi jalan
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // ── 1. PANEL ATAS (Status Bar)
+        // ── 1. PANEL ATAS (Status Bar) ─────────────────────────────────────────
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         topPanel.setOpaque(false);
@@ -61,46 +75,52 @@ public class BukaRestoranGUI extends JFrame {
         topPanel.add(lblKapasitas);
         add(topPanel, BorderLayout.NORTH);
 
-        //2. PANEL TENGAH (Ilustrasi & Terminal)
-        JPanel centerPanel = new JPanel(null);
+        // ── 2. PANEL TENGAH ────────────────────────────────────────────────────
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         centerPanel.setOpaque(false);
 
-        // Label ilustrasi kiri
-        ImageIcon icon = new ImageIcon(getClass().getResource("/asset/dapur1.png"));
-        Image img = icon.getImage();
-        Image resize = img.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(resize);
+        // ── Kiri: Panel ilustrasi ──────────────────────────────────────────────
+        Image imgIlustrasiRaw = new ImageIcon(
+                getClass().getResource("/asset/dapur1.png")).getImage();
 
-        JLabel lblIlustrasi = new JLabel(icon);
-        lblIlustrasi.setBounds(10, 15, 425, 425);
-        lblIlustrasi.setForeground(Color.WHITE);
+        JPanel ilustrasiPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgIlustrasiRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        ilustrasiPanel.setOpaque(false);
 
-        // Terminal background image
-        ImageIcon iconTerminal = new ImageIcon(getClass().getResource("/asset/terminal.png"));
-        Image imgTerminal = iconTerminal.getImage();
-        Image resizeTerminal = imgTerminal.getScaledInstance(425, 425, Image.SCALE_SMOOTH);
-        iconTerminal = new ImageIcon(resizeTerminal);
+        // ── Kanan: Panel terminal ──────────────────────────────────────────────
+        Image imgTerminalRaw = new ImageIcon(
+                getClass().getResource("/asset/terminal.png")).getImage();
 
-        JLabel terminalBg = new JLabel(iconTerminal);
-        terminalBg.setLayout(null);
-        terminalBg.setBounds(440, 25, 425, 425);
+        JPanel terminalPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgTerminalRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        terminalPanel.setOpaque(false);
+        terminalPanel.setBorder(BorderFactory.createEmptyBorder(55, 45, 60, 45));
 
-        // Text area di dalam terminal
-        terminalArea = new JTextArea();
-        terminalArea.setEditable(false);
-        terminalArea.setOpaque(false);
-        terminalArea.setForeground(Color.GREEN);
-        terminalArea.setFont(new Font("Monospaced", Font.BOLD, 10));
+        // JTextPane agar mendukung warna per-baris
+        terminalPane = new JTextPane();
+        terminalPane.setEditable(false);
+        terminalPane.setOpaque(false);
 
-        JScrollPane scrollTerminal = new JScrollPane(terminalArea);
-        scrollTerminal.setBounds(40, 60, 350, 350);
+        JScrollPane scrollTerminal = new JScrollPane(terminalPane);
         scrollTerminal.setOpaque(false);
         scrollTerminal.getViewport().setOpaque(false);
+        scrollTerminal.setBorder(null);
 
-        terminalBg.add(scrollTerminal);
+        terminalPanel.add(scrollTerminal, BorderLayout.CENTER);
 
-        centerPanel.add(lblIlustrasi);
-        centerPanel.add(terminalBg);
+        centerPanel.add(ilustrasiPanel);
+        centerPanel.add(terminalPanel);
         add(centerPanel, BorderLayout.CENTER);
 
         // ── 3. PANEL BAWAH (Tombol Kembali) ───────────────────────────────────
@@ -108,7 +128,6 @@ public class BukaRestoranGUI extends JFrame {
         buttonPanel.setPreferredSize(new Dimension(0, 70));
         buttonPanel.setOpaque(false);
 
-        // Tombol kembali berikon (fallback teks jika aset tidak ada)
         JButton btnKembali;
         try {
             ImageIcon iconBack = new ImageIcon(getClass().getResource("/asset/back.png"));
@@ -123,19 +142,49 @@ public class BukaRestoranGUI extends JFrame {
             btnKembali.setPreferredSize(new Dimension(250, 50));
         }
 
-        btnKembali.setEnabled(false); // Dimatikan sementara sampai simulasi selesai
-
+        btnKembali.setEnabled(false);
         buttonPanel.add(btnKembali);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        // ── Logika tombol kembali ──────────────────────────────────────────────
         btnKembali.addActionListener(e -> {
+            System.setOut(originalSystemOut);
             new MainMenuGUI(restoran).setVisible(true);
             this.dispose();
         });
 
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                System.setOut(originalSystemOut);
+                dispose();
+            }
+        });
+
         updateStatusBar();
         mulaiSimulasiThread(btnKembali);
+    }
+
+    // ── Ganti warna aktif, flush dulu agar teks sebelumnya sudah terkirim ─────
+    private void changeColor(Color c) {
+        System.out.flush();
+        currentColor = c;
+    }
+
+    // ── Tulis teks berwarna ke JTextPane secara thread-safe ───────────────────
+    private void appendToTerminal(String text, Color c) {
+        SwingUtilities.invokeLater(() -> {
+            StyleContext sc = StyleContext.getDefaultStyleContext();
+            AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, c);
+            aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Monospaced");
+            aset = sc.addAttribute(aset, StyleConstants.Bold, true);
+            aset = sc.addAttribute(aset, StyleConstants.FontSize, 12);
+
+            try {
+                int len = terminalPane.getDocument().getLength();
+                terminalPane.getDocument().insertString(len, text, aset);
+            } catch (Exception e) { /* abaikan */ }
+            terminalPane.setCaretPosition(terminalPane.getDocument().getLength());
+        });
     }
 
     private void updateStatusBar() {
@@ -144,34 +193,66 @@ public class BukaRestoranGUI extends JFrame {
         lblKapasitas.setText("KAPASITAS : " + restoran.getKapasitas());
     }
 
-    // ========================================================
-    // LOGIKA SIMULASI MENGGUNAKAN THREAD AGAR GUI TIDAK FREEZE
-    // ========================================================
     private void mulaiSimulasiThread(JButton btnKembali) {
         if (restoran.getMenu().isEmpty()) {
-            terminalArea.setText("❌ Gagal buka! Anda belum menentukan menu di Dapur.\n");
+            appendToTerminal("❌ Gagal buka! Anda belum menentukan menu di Dapur.\n", COLOR_RED);
             btnKembali.setEnabled(true);
             return;
         }
 
-        // Trik: Mengalihkan System.out.println agar masuk ke terminalArea GUI
         originalSystemOut = System.out;
-        PrintStream customOut = new PrintStream(new OutputStream() {
+
+        // ── Custom OutputStream: deteksi warna otomatis per baris ─────────────
+        OutputStream out = new OutputStream() {
+            private StringBuilder buffer = new StringBuilder();
+
             @Override
             public void write(int b) {
-                // Diarahkan secara thread-safe ke TextArea GUI
-                SwingUtilities.invokeLater(() -> {
-                    terminalArea.append(String.valueOf((char) b));
-                    // Otomatis scroll ke bawah
-                    terminalArea.setCaretPosition(terminalArea.getDocument().getLength());
-                });
+                if (b == '\r') return;
+                buffer.append((char) b);
+                if (b == '\n') flushBuffer();
             }
-        });
-        System.setOut(customOut); // Pasang alat penyadap print
 
-        // Membuat proses latar belakang agar jeda (sleep) tidak membuat aplikasi macet
+            private void flushBuffer() {
+                if (buffer.length() == 0) return;
+                String text = buffer.toString();
+                Color colorToUse = currentColor;
+
+                String teksKecil = text.toLowerCase();
+                if (teksKecil.contains("alarm")    || teksKecil.contains("kabur")
+                        || teksKecil.contains("rugi")     || teksKecil.contains("kecewa")
+                        || teksKecil.contains("penuh")    || teksKecil.contains("nasib buruk")
+                        || teksKecil.contains("gawat")    || teksKecil.contains("❌")) {
+                    colorToUse = COLOR_RED;
+                } else if (teksKecil.contains("berhasil") || teksKecil.contains("tips")
+                        || teksKecil.contains("efek jimat") || teksKecil.contains("diusir")
+                        || teksKecil.contains("cleaner aktif")) {
+                    colorToUse = COLOR_GREEN;
+                }
+
+                appendToTerminal(text, colorToUse);
+                buffer.setLength(0);
+            }
+
+            @Override
+            public void flush() { flushBuffer(); }
+        };
+        System.setOut(new PrintStream(out, true));
+
+
         new Thread(() -> {
+
+            changeColor(COLOR_ORANGE);
             System.out.println("=== RESTORAN DIBUKA (Kapasitas Maksimal: " + restoran.getKapasitas() + ") ===");
+
+            changeColor(COLOR_BLACK);
+            Jimat jimatAktif = restoran.getJimatAktif();
+            boolean hasCleaner = (jimatAktif instanceof JimatCleaner);
+
+            if (jimatAktif != null) {
+                System.out.println("[INFO] Jimat Aktif Hari Ini: " + jimatAktif.getNama());
+            }
+
             System.out.println("⏳ Menunggu pelanggan datang...\n");
 
             Random ran = new Random();
@@ -181,46 +262,77 @@ public class BukaRestoranGUI extends JFrame {
             for (int i = 0; i < 5; i++) {
                 try {
                     int waktuTunggu = ran.nextInt(2001) + 2000;
-                    Thread.sleep(waktuTunggu); // Delay 2-4 detik
+                    Thread.sleep(waktuTunggu);
                 } catch (InterruptedException e) {
                     System.out.println("Waktu tunggu terganggu!");
                 }
 
-                // Cek aman untuk Random nextInt (jika kapasitas terlalu kecil)
+                // Event tikus (20% chance)
+                if (ran.nextInt(100) < 20) {
+                    if (hasCleaner) {
+                        changeColor(COLOR_GREEN);
+                        System.out.println("[CLEANER AKTIF] Ada tikus mengendus gudang, tapi langsung diusir!");
+                    } else {
+                        changeColor(COLOR_RED);
+                        System.out.println("GAWAT! Seekor tikus masuk ke gudang!");
+                        if (!restoran.stok.isEmpty()) {
+                            List<BahanBaku> daftarBahan = new ArrayList<>(restoran.stok.keySet());
+                            BahanBaku bahanDimakan = daftarBahan.get(ran.nextInt(daftarBahan.size()));
+                            int sisaStok = restoran.stok.get(bahanDimakan);
+                            if (sisaStok > 0) {
+                                restoran.stok.put(bahanDimakan, sisaStok - 1);
+                                System.out.println("-> Tikus memakan 1 unit " + bahanDimakan.getNama() + " Anda!");
+                            }
+                        } else {
+                            System.out.println("-> Gudang kosong, tikus pergi mencari tempat lain.");
+                        }
+                    }
+                    System.out.println("");
+                }
+
                 int maxRandom = Math.max(1, restoran.getKapasitas() - 3);
                 int jml = ran.nextInt(maxRandom) + 1;
+
+                changeColor(COLOR_BLUE);
+                System.out.println("--------------------------------------------------");
                 System.out.println("[Rombongan " + (i + 1) + "] " + jml + " orang datang...");
 
                 if (kursiTerisi + jml <= restoran.getKapasitas()) {
                     kursiTerisi += jml;
                     System.out.println("Tamu duduk. (Kursi terpakai: " + kursiTerisi + "/" + restoran.getKapasitas() + ")");
+                    System.out.println("");
 
+                    changeColor(COLOR_BLACK);
                     totalTamu += jml;
                     Pelanggan p = new Pelanggan(jml, restoran);
-                    p.pilihMenu(restoran); // Output diprint otomatis ke GUI
-                    p.selesaikanTransaksi(restoran); // Uang dll bertambah
+                    p.pilihMenu(restoran);
+                    p.selesaikanTransaksi(restoran);
 
+                    changeColor(COLOR_BLUE);
                     kursiTerisi -= jml;
-                    System.out.println("Tamu selesai dan pergi. Kursi kosong kembali.\n");
+                    System.out.println("");
+                    System.out.println("Tamu selesai dan pergi. Kursi kosong kembali.");
+                    System.out.println("--------------------------------------------------\n");
+                    SwingUtilities.invokeLater(this::updateStatusBar);
+
                 } else {
-                    System.out.println("Restoran penuh! " + jml + " tamu tidak jadi pesan dan pergi.\n");
+                    changeColor(COLOR_RED);
+                    System.out.println("Restoran penuh! " + jml + " tamu tidak jadi pesan dan pergi.");
+                    System.out.println("--------------------------------------------------\n");
                 }
             }
 
+            changeColor(COLOR_ORANGE);
             restoran.tambahExp(totalTamu * 20);
             System.out.println("=== HARI BERAKHIR ===");
             System.out.println("Total tamu yang dilayani: " + totalTamu);
             System.out.println("\nSILAKAN KLIK TOMBOL KEMBALI.");
 
-            // Kembalikan System.out ke aslinya
-            System.setOut(originalSystemOut);
-
-            // Perbarui tampilan status bar dengan data terbaru dan nyalakan tombol kembali
             SwingUtilities.invokeLater(() -> {
                 updateStatusBar();
                 btnKembali.setEnabled(true);
-                setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             });
+
         }).start();
     }
 }

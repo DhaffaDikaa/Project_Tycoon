@@ -11,11 +11,12 @@ public class TokoJimatGUI extends JFrame {
     private JLabel lblLevel, lblUang, lblKapasitas;
 
     public TokoJimatGUI(Restoran restoran) {
+
         this.restoran = restoran;
 
-        // ── Background Panel (sama seperti DapurGUI) ──────────────────────────
         ImageIcon bg = new ImageIcon(getClass().getResource("/asset/openingmenu.png"));
         Image background = bg.getImage();
+
         JPanel bgPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -23,16 +24,17 @@ public class TokoJimatGUI extends JFrame {
                 g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
             }
         };
+
         bgPanel.setLayout(new BorderLayout());
         setContentPane(bgPanel);
 
         setTitle("Resto Tycoon - Toko Jimat");
         setSize(900, 600);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(10, 10));
 
-        // ── 1. PANEL ATAS (Status Bar) ─────────────────────────────────────────
         JPanel topPanel = new JPanel(new GridLayout(1, 4, 10, 0));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
         topPanel.setOpaque(false);
@@ -57,166 +59,209 @@ public class TokoJimatGUI extends JFrame {
         topPanel.add(lblLevel);
         topPanel.add(lblUang);
         topPanel.add(lblKapasitas);
+
         add(topPanel, BorderLayout.NORTH);
 
-        // ── 2. PANEL TENGAH (Ilustrasi & Terminal) ────────────────────────────
-        JPanel centerPanel = new JPanel(null);
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
         centerPanel.setOpaque(false);
 
-        // Label ilustrasi kiri
-        ImageIcon icon = new ImageIcon(getClass().getResource("/asset/tokojimat.png"));
-        Image img = icon.getImage();
-        Image resize = img.getScaledInstance(700, 425, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(resize);
+        Image imgIlustrasiRaw = new ImageIcon(getClass().getResource("/asset/tokojimat.png")).getImage();
 
-        JLabel lblIlustrasi = new JLabel(icon);
-        lblIlustrasi.setBounds(10, 15, 425, 425);
-        lblIlustrasi.setForeground(Color.WHITE);
+        JPanel ilustrasiPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgIlustrasiRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
 
-        // Terminal background image
-        ImageIcon iconTerminal = new ImageIcon(getClass().getResource("/asset/terminal.png"));
-        Image imgTerminal = iconTerminal.getImage();
-        Image resizeTerminal = imgTerminal.getScaledInstance(425, 425, Image.SCALE_SMOOTH);
-        iconTerminal = new ImageIcon(resizeTerminal);
+        ilustrasiPanel.setOpaque(false);
 
-        JLabel terminalBg = new JLabel(iconTerminal);
-        terminalBg.setLayout(null);
-        terminalBg.setBounds(440, 25, 425, 425);
+        Image imgTerminalRaw = new ImageIcon(getClass().getResource("/asset/terminal.png")).getImage();
 
-        // Text area di dalam terminal
-        terminalArea = new JTextArea("TERMINAL :\n\nSelamat datang di Toko Jimat!\nSilakan pilih menu di bawah.\n");
+        JPanel terminalPanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(imgTerminalRaw, 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+
+        terminalPanel.setOpaque(false);
+        terminalPanel.setBorder(BorderFactory.createEmptyBorder(55, 45, 60, 45));
+
+        terminalArea = new JTextArea();
         terminalArea.setEditable(false);
         terminalArea.setOpaque(false);
         terminalArea.setForeground(Color.GREEN);
         terminalArea.setFont(new Font("Monospaced", Font.BOLD, 10));
-        terminalArea.setBounds(40, 60, 330, 300);
 
         JScrollPane scrollTerminal = new JScrollPane(terminalArea);
-        scrollTerminal.setBounds(40, 60, 330, 280);
         scrollTerminal.setOpaque(false);
         scrollTerminal.getViewport().setOpaque(false);
+        scrollTerminal.setBorder(null);
 
-        terminalBg.add(scrollTerminal);
+        terminalPanel.add(scrollTerminal, BorderLayout.CENTER);
 
-        centerPanel.add(lblIlustrasi);
-        centerPanel.add(terminalBg);
+        centerPanel.add(ilustrasiPanel);
+        centerPanel.add(terminalPanel);
+
         add(centerPanel, BorderLayout.CENTER);
 
-        // ── 3. PANEL BAWAH (Card Layout: Menu Utama / Beli / Jual / Gunakan) ──
         cardLayout = new CardLayout();
+
         bottomCardPanel = new JPanel(cardLayout);
-        bottomCardPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
         bottomCardPanel.setOpaque(false);
+        bottomCardPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 
         bottomCardPanel.add(createMainMenuPanel(), "MAIN_MENU");
-        bottomCardPanel.add(createBeliPanel(),     "BELI_MENU");
-        bottomCardPanel.add(createJualPanel(),     "JUAL_MENU");
-        bottomCardPanel.add(createGunakanPanel(),  "GUNAKAN_MENU");
+        bottomCardPanel.add(createBeliPanel(), "BELI_MENU");
+        bottomCardPanel.add(createJualPanel(), "JUAL_MENU");
+        bottomCardPanel.add(createGunakanPanel(), "GUNAKAN_MENU");
 
         add(bottomCardPanel, BorderLayout.SOUTH);
 
         updateStatusBar();
+        tampilkanDaftarShop();
     }
 
-    // ── Helper: buat tombol dengan ikon (fallback ke teks jika aset tidak ada) ──
-    private JButton buatTombolIkon(String pathAset, int lebar, int tinggi, String teksBackup) {
+    private JButton buatTombolIkon(String path, int w, int h, String backup) {
+
         try {
-            ImageIcon icon = new ImageIcon(getClass().getResource(pathAset));
-            Image img = icon.getImage().getScaledInstance(lebar, tinggi, Image.SCALE_SMOOTH);
+
+            ImageIcon icon = new ImageIcon(getClass().getResource(path));
+            Image img = icon.getImage().getScaledInstance(w, h, Image.SCALE_SMOOTH);
+
             JButton btn = new JButton(new ImageIcon(img));
-            btn.setPreferredSize(new Dimension(lebar, tinggi));
+
+            btn.setPreferredSize(new Dimension(w, h));
             btn.setBorderPainted(false);
             btn.setContentAreaFilled(false);
             btn.setFocusPainted(false);
+
             return btn;
+
         } catch (Exception ex) {
-            // Fallback teks biasa jika file aset tidak ditemukan
-            JButton btn = new JButton(teksBackup);
-            btn.setPreferredSize(new Dimension(lebar, tinggi));
+
+            JButton btn = new JButton(backup);
+            btn.setPreferredSize(new Dimension(w, h));
+
             return btn;
         }
     }
 
-    // ── Helper: buat label field berikon dengan JTextField di dalamnya ─────────
     private JLabel buatLabelField(JTextField txtField) {
+
         ImageIcon iconField;
+
         try {
+
             iconField = new ImageIcon(getClass().getResource("/asset/dapur/kosong.png"));
             Image img = iconField.getImage().getScaledInstance(165, 45, Image.SCALE_SMOOTH);
             iconField = new ImageIcon(img);
+
         } catch (Exception ex) {
+
             iconField = null;
         }
 
         JLabel labelField = iconField != null ? new JLabel(iconField) : new JLabel();
+
         labelField.setLayout(null);
         labelField.setPreferredSize(new Dimension(165, 45));
 
         txtField.setBounds(20, 5, 120, 35);
         txtField.setForeground(Color.WHITE);
+        txtField.setCaretColor(Color.WHITE);
         txtField.setOpaque(false);
         txtField.setBorder(null);
         txtField.setHorizontalAlignment(JTextField.CENTER);
+
         labelField.add(txtField);
 
         return labelField;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     private void updateStatusBar() {
         lblLevel.setText("LEVEL : " + restoran.getLevel());
         lblUang.setText("UANG : Rp " + restoran.getUang());
         lblKapasitas.setText("KAPASITAS : " + restoran.getKapasitas());
     }
 
-    private void tampilkanDaftarInventaris(String judulMenu) {
-        terminalArea.setText("=== " + judulMenu + " ===\n\n");
+    private void tampilkanDaftarShop() {
+
+        terminalArea.setText("=== 🔮 TOKO JIMAT PERMANEN RESTORAN ===\n\n");
+
+        terminalArea.append("Status Jimat Aktif : " + (restoran.getJimatAktif() != null ? restoran.getJimatAktif().getNama() : "Tidak Ada") + "\n\n");
+
+        terminalArea.append("1. JIMAT CHARMING -> Rp " + GameGenerateGUI.HARGA_CHARMING + "\n");
+        terminalArea.append("2. JIMAT SECURITY -> Rp " + GameGenerateGUI.HARGA_SECURITY + "\n");
+        terminalArea.append("3. JIMAT CLEANER -> Rp " + GameGenerateGUI.HARGA_CLEANER + "\n\n");
+
+        terminalArea.append("Silakan pilih menu di bawah.\n");
+    }
+
+    private void tampilkanDaftarInventaris(String title) {
+
+        terminalArea.setText("=== " + title + " ===\n\n");
+
         List<Jimat> inventaris = restoran.getInventarisJimat();
 
         if (inventaris.isEmpty()) {
-            terminalArea.append("Inventaris jimat Anda saat ini kosong.\n");
+
+            terminalArea.append("Tas jimat Anda kosong.\n");
+
         } else {
-            for (int i = 0; i < inventaris.size(); i++) {
-                Jimat j = inventaris.get(i);
-                String statusPakai = (restoran.getJimatAktif() != null
-                        && restoran.getJimatAktif().equals(j)) ? " [SEDANG DIGUNAKAN]" : "";
-                terminalArea.append((i + 1) + ". " + j.getNama() + statusPakai + "\n");
+
+            int no = 1;
+
+            for (Jimat j : inventaris) {
+
+                String status = "";
+
+                if (restoran.getJimatAktif() != null && restoran.getJimatAktif().equals(j)) status = " [SEDANG DIPAKAI]";
+
+                terminalArea.append(no + ". " + j.getNama() + status + "\n");
+
+                no++;
             }
         }
     }
 
     private void prosesBeliJimat(Jimat jimat, int harga) {
+
         if (restoran.getUang() >= harga) {
+
             restoran.kurangiUang(harga);
             restoran.getInventarisJimat().add(jimat);
-            terminalArea.append("✅ Berhasil membeli " + jimat.getNama() + "!\n");
+
+            terminalArea.append("✅ " + jimat.getNama() + " berhasil dibeli!\n");
+            terminalArea.append("💸 Uang berkurang Rp " + harga + "\n");
+
             updateStatusBar();
-        } else {
-            terminalArea.append("❌ Uang tidak cukup! Butuh Rp " + harga + "\n");
-        }
+
+        } else terminalArea.append("❌ Uang kas tidak cukup!\n");
     }
 
-    // ── Panel: Menu Utama ──────────────────────────────────────────────────────
     private JPanel createMainMenuPanel() {
+
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
-        panel.setPreferredSize(new Dimension(0, 70));
+
         panel.setOpaque(false);
 
-        JButton btnBeli     = buatTombolIkon("/asset/beli.png",    140, 45, "BELI JIMAT");
-        JButton btnJual     = buatTombolIkon("/asset/jual.png",    140, 45, "JUAL JIMAT");
-        JButton btnGunakan  = buatTombolIkon("/asset/gunakan.png", 140, 45, "GUNAKAN JIMAT");
-        JButton btnKembali  = buatTombolIkon("/asset/back.png",              150, 40, "KEMBALI");
+        JButton btnBeli = buatTombolIkon("/asset/beli.png", 140, 45, "BELI");
+        JButton btnJual = buatTombolIkon("/asset/jual.png", 140, 45, "JUAL");
+        JButton btnGunakan = buatTombolIkon("/asset/gunakan.png", 140, 45, "GUNAKAN");
+        JButton btnBack = buatTombolIkon("/asset/back.png", 150, 40, "KEMBALI");
 
         btnBeli.addActionListener(e -> {
-            terminalArea.setText("=== MENU BELI JIMAT ===\n\n");
-            terminalArea.append("1. Jimat Charming  (Rp " + GameGenerateGUI.HARGA_CHARMING  + ")\n");
-            terminalArea.append("2. Jimat Security  (Rp " + GameGenerateGUI.HARGA_SECURITY  + ")\n");
-            terminalArea.append("3. Jimat Cleaner   (Rp " + GameGenerateGUI.HARGA_CLEANER   + ")\n");
+            tampilkanDaftarShop();
             cardLayout.show(bottomCardPanel, "BELI_MENU");
         });
 
         btnJual.addActionListener(e -> {
-            tampilkanDaftarInventaris("MENU JUAL JIMAT (Harga Jual 50%)");
+            tampilkanDaftarInventaris("MENU JUAL JIMAT");
             cardLayout.show(bottomCardPanel, "JUAL_MENU");
         });
 
@@ -225,125 +270,167 @@ public class TokoJimatGUI extends JFrame {
             cardLayout.show(bottomCardPanel, "GUNAKAN_MENU");
         });
 
-        btnKembali.addActionListener(e -> this.dispose());
+        btnBack.addActionListener(e -> dispose());
 
         panel.add(btnBeli);
         panel.add(btnJual);
         panel.add(btnGunakan);
-        panel.add(btnKembali);
+        panel.add(btnBack);
+
         return panel;
     }
 
-    // ── Panel: Beli ────────────────────────────────────────────────────────────
     private JPanel createBeliPanel() {
+
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
-        panel.setPreferredSize(new Dimension(0, 70));
+
         panel.setOpaque(false);
 
         JButton btnCharming = buatTombolIkon("/asset/jimat/charming.png", 130, 40, "CHARMING");
         JButton btnSecurity = buatTombolIkon("/asset/jimat/security.png", 130, 40, "SECURITY");
-        JButton btnCleaner  = buatTombolIkon("/asset/jimat/cleaner.png",  130, 40, "CLEANER");
-        JButton btnKembali  = buatTombolIkon("/asset/back.png",               130, 40, "KEMBALI");
+        JButton btnCleaner = buatTombolIkon("/asset/jimat/cleaner.png", 130, 40, "CLEANER");
+        JButton btnBack = buatTombolIkon("/asset/back.png", 130, 40, "KEMBALI");
 
         btnCharming.addActionListener(e -> prosesBeliJimat(new JimatCharming(), GameGenerateGUI.HARGA_CHARMING));
         btnSecurity.addActionListener(e -> prosesBeliJimat(new JimatSecurity(), GameGenerateGUI.HARGA_SECURITY));
-        btnCleaner.addActionListener(e  -> prosesBeliJimat(new JimatCleaner(),  GameGenerateGUI.HARGA_CLEANER));
+        btnCleaner.addActionListener(e -> prosesBeliJimat(new JimatCleaner(), GameGenerateGUI.HARGA_CLEANER));
 
-        btnKembali.addActionListener(e -> cardLayout.show(bottomCardPanel, "MAIN_MENU"));
+        btnBack.addActionListener(e -> {
+            tampilkanDaftarShop();
+            cardLayout.show(bottomCardPanel, "MAIN_MENU");
+        });
 
         panel.add(btnCharming);
         panel.add(btnSecurity);
         panel.add(btnCleaner);
-        panel.add(btnKembali);
+        panel.add(btnBack);
+
         return panel;
     }
 
-    // ── Panel: Jual ────────────────────────────────────────────────────────────
     private JPanel createJualPanel() {
+
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
-        panel.setPreferredSize(new Dimension(0, 70));
+
         panel.setOpaque(false);
 
-        JTextField txtFieldBox = new JTextField();
-        JLabel labelField = buatLabelField(txtFieldBox);
+        JLabel lbl = new JLabel("MASUKAN NOMOR JIMAT");
+        lbl.setForeground(Color.WHITE);
 
-        JButton btnJual    = buatTombolIkon("/asset/jual.png", 130, 40, "JUAL");
-        JButton btnKembali = buatTombolIkon("/asset/back.png",            150, 40, "KEMBALI");
+        JTextField txtField = new JTextField();
+
+        JLabel field = buatLabelField(txtField);
+
+        JButton btnJual = buatTombolIkon("/asset/jual.png", 130, 40, "JUAL");
+        JButton btnBack = buatTombolIkon("/asset/back.png", 150, 40, "KEMBALI");
 
         btnJual.addActionListener(e -> {
+
             try {
-                int idx = Integer.parseInt(txtFieldBox.getText()) - 1;
+
+                int idx = Integer.parseInt(txtField.getText()) - 1;
+
                 List<Jimat> inventaris = restoran.getInventarisJimat();
 
                 if (idx >= 0 && idx < inventaris.size()) {
-                    Jimat dijatuhin = inventaris.get(idx);
-                    int hargaJual = 50000;
 
-                    inventaris.remove(idx);
-                    restoran.tambahUang(hargaJual);
+                    Jimat dijual = inventaris.remove(idx);
 
-                    if (restoran.getJimatAktif() != null && restoran.getJimatAktif().equals(dijatuhin)) {
+                    int refund = 0;
+
+                    if (dijual instanceof JimatCharming) refund = GameGenerateGUI.HARGA_CHARMING / 2;
+                    else if (dijual instanceof JimatSecurity) refund = GameGenerateGUI.HARGA_SECURITY / 2;
+                    else if (dijual instanceof JimatCleaner) refund = GameGenerateGUI.HARGA_CLEANER / 2;
+
+                    restoran.tambahUang(refund);
+
+                    if (restoran.getJimatAktif() != null && restoran.getJimatAktif().equals(dijual)) {
                         restoran.pasangJimat(null);
+                        terminalArea.append("⚠️ Jimat aktif otomatis dilepas!\n");
                     }
 
-                    terminalArea.append("💰 Jual berhasil! Anda mendapat Rp " + hargaJual + "\n");
-                    txtFieldBox.setText("");
+                    terminalArea.append("💰 " + dijual.getNama() + " berhasil dijual!\n");
+                    terminalArea.append("💵 Anda mendapat Rp " + refund + "\n");
+
+                    txtField.setText("");
+
                     tampilkanDaftarInventaris("MENU JUAL JIMAT");
+
                     updateStatusBar();
-                } else {
-                    terminalArea.append("❌ Nomor jimat tidak valid!\n");
-                }
+
+                } else terminalArea.append("❌ Nomor jimat tidak valid!\n");
+
             } catch (NumberFormatException ex) {
+
                 terminalArea.append("❌ Harap masukkan angka!\n");
             }
         });
 
-        btnKembali.addActionListener(e -> cardLayout.show(bottomCardPanel, "MAIN_MENU"));
+        btnBack.addActionListener(e -> {
+            tampilkanDaftarShop();
+            cardLayout.show(bottomCardPanel, "MAIN_MENU");
+        });
 
-        panel.add(labelField);
+        panel.add(lbl);
+        panel.add(field);
         panel.add(btnJual);
-        panel.add(btnKembali);
+        panel.add(btnBack);
+
         return panel;
     }
 
-    // ── Panel: Gunakan ─────────────────────────────────────────────────────────
     private JPanel createGunakanPanel() {
+
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
-        panel.setPreferredSize(new Dimension(0, 70));
+
         panel.setOpaque(false);
 
-        JTextField txtFieldBox = new JTextField();
-        JLabel labelField = buatLabelField(txtFieldBox);
+        JLabel lbl = new JLabel("MASUKAN NOMOR JIMAT");
+        lbl.setForeground(Color.WHITE);
+
+        JTextField txtField = new JTextField();
+
+        JLabel field = buatLabelField(txtField);
 
         JButton btnGunakan = buatTombolIkon("/asset/dapur/pilihMenu.png", 165, 45, "GUNAKAN");
-        JButton btnKembali = buatTombolIkon("/asset/back.png",            150, 40, "KEMBALI");
+        JButton btnBack = buatTombolIkon("/asset/back.png", 150, 40, "KEMBALI");
 
         btnGunakan.addActionListener(e -> {
+
             try {
-                int idx = Integer.parseInt(txtFieldBox.getText()) - 1;
+
+                int idx = Integer.parseInt(txtField.getText()) - 1;
+
                 List<Jimat> inventaris = restoran.getInventarisJimat();
 
                 if (idx >= 0 && idx < inventaris.size()) {
+
                     restoran.pasangJimat(inventaris.get(idx));
 
-                    if (restoran.getJimatAktif() != null) {
-                        terminalArea.append("✨ " + restoran.getJimatAktif().aktifkanEfek() + "\n");
-                    }
-                    txtFieldBox.setText("");
+                    terminalArea.append("✨ " + restoran.getJimatAktif().aktifkanEfek() + "\n");
+
+                    txtField.setText("");
+
                     tampilkanDaftarInventaris("MENU GUNAKAN JIMAT");
-                } else {
-                    terminalArea.append("❌ Nomor jimat tidak ditemukan!\n");
-                }
+
+                } else terminalArea.append("❌ Nomor jimat tidak ditemukan!\n");
+
             } catch (NumberFormatException ex) {
+
                 terminalArea.append("❌ Harap masukkan angka!\n");
             }
         });
 
-        btnKembali.addActionListener(e -> cardLayout.show(bottomCardPanel, "MAIN_MENU"));
+        btnBack.addActionListener(e -> {
+            tampilkanDaftarShop();
+            cardLayout.show(bottomCardPanel, "MAIN_MENU");
+        });
 
-        panel.add(labelField);
+        panel.add(lbl);
+        panel.add(field);
         panel.add(btnGunakan);
-        panel.add(btnKembali);
+        panel.add(btnBack);
+
         return panel;
     }
 }
